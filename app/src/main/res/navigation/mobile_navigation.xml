@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_category">
+
+    <fragment
+        android:id="@+id/navigation_category"
+        android:name="org.techtown.daychallenge.ui.Category.CategoryFragment"
+        android:label="@string/title_category"
+        tools:layout="@layout/fragment_category" />
+
+    <fragment
+        android:id="@+id/navigation_none"
+        android:name="org.techtown.daychallenge.ui.none.NoneFragment"
+        android:label="@string/title_none"
+        tools:layout="@layout/fragment_none" />
+
+    <fragment
+        android:id="@+id/navigation_feed"
+        android:name="org.techtown.daychallenge.ui.Feed.FeedFragment"
+        android:label="@string/title_feed"
+        tools:layout="@layout/fragment_feed" />
+</navigation>
