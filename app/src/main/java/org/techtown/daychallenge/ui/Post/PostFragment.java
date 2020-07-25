@@ -27,11 +27,11 @@ public class PostFragment extends Fragment {
         postViewModel =
                 ViewModelProviders.of(this).get(PostViewModel.class);
         View root = inflater.inflate(R.layout.fragment_post, container, false);
-        final TextView textView = root.findViewById(R.id.text_post);
+        //final TextView textView = root.findViewById(R.id.text_post);
         postViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                textView.setText(s);
+        //        textView.setText(s);
             }
         });
         return root;
