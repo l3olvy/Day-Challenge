@@ -1,7 +1,5 @@
 package org.techtown.daychallenge.ui.Challenge;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,27 +11,28 @@ import androidx.lifecycle.ViewModelProviders;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
-import org.techtown.daychallenge.ui.Category.CategoryViewModel;
 
 
 public class ChallengeFragment extends Fragment {
-    private ChallengeViewModel challengeViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        challengeViewModel =
-                ViewModelProviders.of(this).get(ChallengeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_challenge, container, false);
-        final TextView textView = root.findViewById(R.id.text_challenge);
-        challengeViewModel.getText().observe(this, new Observer<String>() {
+
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
+
+        Button back_btn = rootView.findViewById(R.id.back);
+        back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onClick(View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(1);
             }
         });
-        return root;
+        return rootView;
     }
 }

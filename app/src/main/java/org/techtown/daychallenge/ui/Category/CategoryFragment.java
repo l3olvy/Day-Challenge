@@ -13,25 +13,28 @@ import androidx.lifecycle.ViewModelProviders;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 
 public class CategoryFragment extends Fragment {
-    private CategoryViewModel categoryViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        categoryViewModel =
-                ViewModelProviders.of(this).get(CategoryViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_category, container, false);
-        final TextView textView = root.findViewById(R.id.text_category);
-        categoryViewModel.getText().observe(this, new Observer<String>() {
+
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_category, container, false);
+        /*bon
+        Button music_btn = rootView.findViewById(R.id.btn_music);
+        music_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onClick(View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(0);
             }
         });
-        return root;
+         */
+        return rootView;
     }
 }

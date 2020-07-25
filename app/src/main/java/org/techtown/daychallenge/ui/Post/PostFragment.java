@@ -1,7 +1,5 @@
 package org.techtown.daychallenge.ui.Post;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.techtown.daychallenge.R;
-import org.techtown.daychallenge.ui.Category.CategoryViewModel;
 
 
 public class PostFragment extends Fragment {

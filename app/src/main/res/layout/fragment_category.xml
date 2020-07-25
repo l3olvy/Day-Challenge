@@ -1,19 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_category"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text_category"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:background="@drawable/gradation"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_category"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="37dp"
+        android:layout_weight="2"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/btn_music"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:background="#F7EAE0"
+                    android:text="MUSIC" />
+
+                <Button
+                    android:id="@+id/btn_photo"
+                    android:layout_width="151dp"
+                    android:layout_height="150dp"
+                    android:layout_alignParentRight="true"
+                    android:background="#F7EAE0"
+                    android:text="PHOTO" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="37dp">
+
+                <Button
+                    android:id="@+id/btn_drawing"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:background="#F7EAE0"
+                    android:text="DRAWING" />
+
+                <Button
+                    android:id="@+id/btn_care"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_alignParentRight="true"
+                    android:background="#F7EAE0"
+                    android:text="SELF-CARE" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="37dp"
+                android:layout_marginBottom="50dp">
+
+                <Button
+                    android:id="@+id/btn_cleaning"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:background="#F7EAE0"
+                    android:text="CLEANING" />
+
+                <Button
+                    android:id="@+id/btn_study"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_alignParentRight="true"
+                    android:background="#F7EAE0"
+                    android:text="STUDY" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
