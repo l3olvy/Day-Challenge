@@ -18,18 +18,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:text="@string/postTitle"
+            android:textColor="#50BCDF"
             android:textSize="26sp"
-            android:textStyle="bold|italic"
-            android:textColor="#FFFF561D"
-            android:text="Today's Challenge"/>
+            android:textStyle="bold|italic" />
 
         <Button
             android:id="@+id/locationTextView"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:text="X"
+            android:text="@string/postHint"
             android:textSize="20sp" />
 
     </RelativeLayout>
@@ -37,21 +37,21 @@
     <RelativeLayout
         android:id="@+id/contentsLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/topLayout"
-        android:layout_above="@+id/moodLayout" >
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottomLayout"
+        android:layout_below="@+id/topLayout">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="4dp"
+            android:layout_marginTop="8dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_alignParentTop="true"
             app:cardBackgroundColor="#FFFFFFFF"
             app:cardCornerRadius="10dp"
-            app:cardElevation="5dp" >
+            app:cardElevation="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,57 +85,34 @@
 
     </RelativeLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/moodLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_above="@+id/bottomLayout"
-        app:cardBackgroundColor="#FFFFFFFF"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="5dp" />
-
     <RelativeLayout
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
-<!--        android:background="@color/backColor"-->
+        <!--        android:background="@color/backColor"-->
 
-
-        <Button
-            android:id="@+id/closeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/select_button"
-            android:text="저장"
-            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentStrat="true"
+            android:layout_marginStart="110dp"
             android:background="@drawable/select_button"
-            android:text="삭제"
-            android:textColor="@android:color/white"/>
+            android:text="@string/deleteImage"
+            android:textColor="@android:color/white" />
 
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/closeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="110dp"
             android:background="@drawable/select_button"
-            android:text="닫기"
+            android:text="@string/saveBtn"
             android:textColor="@android:color/white" />
 
     </RelativeLayout>
