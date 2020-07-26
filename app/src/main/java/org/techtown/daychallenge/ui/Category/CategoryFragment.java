@@ -25,7 +25,7 @@ public class CategoryFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_category, container, false);
-        /*bon
+
         Button music_btn = rootView.findViewById(R.id.btn_music);
         music_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,7 +34,7 @@ public class CategoryFragment extends Fragment {
                 activity.onFragmentChanged(0);
             }
         });
-         */
+
         return rootView;
     }
 }

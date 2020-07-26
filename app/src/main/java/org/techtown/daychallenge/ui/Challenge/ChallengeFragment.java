@@ -33,6 +33,15 @@ public class ChallengeFragment extends Fragment {
                 activity.onFragmentChanged(1);
             }
         });
+
+        Button write_btn = rootView.findViewById(R.id.write);
+        write_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(2);
+            }
+        });
         return rootView;
     }
 }
