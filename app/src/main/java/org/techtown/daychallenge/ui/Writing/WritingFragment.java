@@ -22,29 +22,19 @@ public class WritingFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-<<<<<<< Updated upstream
-        writingViewModel =
-                ViewModelProviders.of(this).get(WritingViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_writing, container, false);
-        final TextView textView = root.findViewById(R.id.text_writing);
-        writingViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-=======
+
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
 
-        Button close_btn = rootView.findViewById(R.id.closeButton);
+        Button close_btn = rootView.findViewById(R.id.closeBtn);
         close_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(0);
->>>>>>> Stashed changes
             }
         });
 
-        Button save_btn = rootView.findViewById(R.id.saveButton);
+        Button save_btn = rootView.findViewById(R.id.saveBtn);
         save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +43,7 @@ public class WritingFragment extends Fragment {
             }
         });
 
-        Button delete_btn = rootView.findViewById(R.id.deleteButton);
+        Button delete_btn = rootView.findViewById(R.id.deleteBtn);
         delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,14 +52,6 @@ public class WritingFragment extends Fragment {
             }
         });
 
-        Button x_btn = rootView.findViewById(R.id.locationTextView);
-        x_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.onFragmentChanged(0);
-            }
-        });
         return rootView;
     }
 }

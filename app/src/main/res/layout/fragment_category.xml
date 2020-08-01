@@ -25,7 +25,11 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="37dp"
+
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="37dp"
+        android:layout_marginLeft="37dp"
+        android:layout_marginBottom="50dp"
         android:layout_weight="2"
         android:fillViewport="true"
         android:scrollbars="none">
@@ -44,7 +48,7 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:background="#F7EAE0"
-                    android:text="MUSIC" />
+                    android:text="MUSIC"/>
 
                 <Button
                     android:id="@+id/btn_drawing"
@@ -80,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="37dp"
-                android:layout_marginBottom="50dp">
+                >
 
                 <Button
                     android:id="@+id/btn_cleaning"
