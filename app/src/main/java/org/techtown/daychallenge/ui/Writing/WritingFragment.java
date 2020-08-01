@@ -11,8 +11,10 @@ import androidx.lifecycle.ViewModelProviders;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 
 
@@ -23,15 +25,17 @@ public class WritingFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         writingViewModel =
                 ViewModelProviders.of(this).get(WritingViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_writing, container, false);
-        //final TextView textView = root.findViewById(R.id.text_writing);
 
-        writingViewModel.getText().observe(this, new Observer<String>() {
+        // 닫기버튼 누르면 Challenge로 넘어가도록 - 2020.07.30 송고은
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
+        Button closeBtn = rootView.findViewById(R.id.closeBtn);
+        closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(@Nullable String s) {
-                //textView.setText(s);
+            public void onClick(View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(0);
             }
         });
-        return root;
+        return rootView;
     }
 }

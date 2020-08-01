@@ -25,15 +25,6 @@ public class ChallengeFragment extends Fragment {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
 
-        Button back_btn = rootView.findViewById(R.id.back);
-        back_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.onFragmentChanged(1);
-            }
-        });
-
         Button write_btn = rootView.findViewById(R.id.write);
         write_btn.setOnClickListener(new View.OnClickListener() {
             @Override
