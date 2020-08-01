@@ -19,12 +19,9 @@ import org.techtown.daychallenge.R;
 
 
 public class WritingFragment extends Fragment {
-    private WritingViewModel writingViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        writingViewModel =
-                ViewModelProviders.of(this).get(WritingViewModel.class);
 
         // 닫기버튼 누르면 Challenge로 넘어가도록 - 2020.07.30 송고은
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
@@ -36,6 +33,28 @@ public class WritingFragment extends Fragment {
                 activity.onFragmentChanged(0);
             }
         });
+
+
+
+        Button save_btn = rootView.findViewById(R.id.saveBtn);
+        save_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(3);
+            }
+        });
+
+        Button delete_btn = rootView.findViewById(R.id.deleteBtn);
+        delete_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(0);
+            }
+        });
+
+
         return rootView;
     }
 }

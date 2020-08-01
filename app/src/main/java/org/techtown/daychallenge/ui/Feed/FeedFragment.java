@@ -11,26 +11,21 @@ import androidx.lifecycle.ViewModelProviders;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 
 
 public class FeedFragment extends Fragment {
-    private FeedViewModel feedViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        feedViewModel =
-                ViewModelProviders.of(this).get(FeedViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_feed, container, false);
-        final TextView textView = root.findViewById(R.id.text_feed);
-        feedViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        return root;
+
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_feed, container, false);
+
+
+        return rootView;
     }
 }

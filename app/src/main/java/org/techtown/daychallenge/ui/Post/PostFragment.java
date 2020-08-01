@@ -17,20 +17,12 @@ import org.techtown.daychallenge.R;
 
 
 public class PostFragment extends Fragment {
-    private PostViewModel postViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        postViewModel =
-                ViewModelProviders.of(this).get(PostViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_post, container, false);
-        //final TextView textView = root.findViewById(R.id.text_post);
-        postViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-        //        textView.setText(s);
-            }
-        });
-        return root;
+
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post, container, false);
+
+        return rootView;
     }
 }
