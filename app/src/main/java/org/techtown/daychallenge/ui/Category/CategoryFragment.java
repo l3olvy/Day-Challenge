@@ -35,6 +35,24 @@ public class CategoryFragment extends Fragment {
             }
         });
 
+        Button drawing_btn = rootView.findViewById(R.id.btn_drawing);
+        drawing_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(0);
+            }
+        });
+
+        Button happiness_btn = rootView.findViewById(R.id.btn_happiness);
+        happiness_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(0);
+            }
+        });
+
         return rootView;
     }
 }

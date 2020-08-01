@@ -47,12 +47,12 @@
                     android:text="MUSIC" />
 
                 <Button
-                    android:id="@+id/btn_photo"
+                    android:id="@+id/btn_drawing"
                     android:layout_width="151dp"
                     android:layout_height="150dp"
                     android:layout_alignParentRight="true"
                     android:background="#F7EAE0"
-                    android:text="PHOTO" />
+                    android:text="DRAWING" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -61,19 +61,19 @@
                 android:layout_marginTop="37dp">
 
                 <Button
-                    android:id="@+id/btn_drawing"
+                    android:id="@+id/btn_happiness"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:background="#F7EAE0"
-                    android:text="DRAWING" />
+                    android:text="HAPPINESS" />
 
                 <Button
-                    android:id="@+id/btn_care"
+                    android:id="@+id/btn_photo"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_alignParentRight="true"
                     android:background="#F7EAE0"
-                    android:text="SELF-CARE" />
+                    android:text="PHOTO" />
             </RelativeLayout>
 
             <RelativeLayout

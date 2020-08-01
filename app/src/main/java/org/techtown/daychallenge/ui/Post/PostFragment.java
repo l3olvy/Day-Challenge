@@ -17,10 +17,10 @@ import org.techtown.daychallenge.R;
 
 
 public class PostFragment extends Fragment {
-    private PostViewModel postViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+<<<<<<< Updated upstream
         postViewModel =
                 ViewModelProviders.of(this).get(PostViewModel.class);
         View root = inflater.inflate(R.layout.fragment_post, container, false);
@@ -32,5 +32,12 @@ public class PostFragment extends Fragment {
             }
         });
         return root;
+=======
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post, container, false);
+
+
+
+        return rootView;
+>>>>>>> Stashed changes
     }
 }
