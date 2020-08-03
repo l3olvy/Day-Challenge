@@ -1,30 +1,18 @@
 package org.techtown.daychallenge;
 
 import android.Manifest;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.techtown.daychallenge.ui.Category.CategoryFragment;
 import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
@@ -33,10 +21,7 @@ import org.techtown.daychallenge.ui.Post.PostFragment;
 import org.techtown.daychallenge.ui.Writing.WritingFragment;
 import org.techtown.daychallenge.ui.none.NoneFragment;
 
-import java.io.InputStream;
-import java.util.zip.Inflater;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends dbAction {
 
     CategoryFragment categoryFragment;
     ChallengeFragment challengeFragment;
@@ -47,11 +32,19 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView navView;
 
+    public SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkSelfPermission();
+
+        // 2020.08.03 송고은
+        // 작업 내용 - 앱을 처음 실행 했을 경우에만 DB, TABLE 생성함
+        prefs = getSharedPreferences("Pref", MODE_PRIVATE); // 생성하기
+        checkFirstRun(); // 앱을 처음 실행했는지 확인하는 함수
+        // delTable(); //Data가 많아져서 지저분 해졌을 경우에 table 자체를 삭제하고 생성함
 
         categoryFragment = new CategoryFragment();
         challengeFragment = new ChallengeFragment();
@@ -84,6 +77,16 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
         */
+    }
+
+    // 2020.08.04 송고은
+    public void checkFirstRun() {
+        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+        // 앱 처음 실행했는지 확인하는 조건문
+        if (isFirstRun) { // ture인 경우 처음 실행하는 것
+            createDatabase();
+            createTable();
+        }
     }
 
     public void checkSelfPermission() {
