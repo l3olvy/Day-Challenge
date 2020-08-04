@@ -2,7 +2,9 @@ package org.techtown.daychallenge;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Build;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -18,10 +20,12 @@ public class dbAction extends AppCompatActivity {
     static SQLiteDatabase database;
     public static String cate = null;
     public TextView textView;
-
+    public ImageView post_img;
     protected void createDatabase() {
         dbHelper = new DatabaseHelper(this);
         database = dbHelper.getWritableDatabase();
+        post_img = findViewById(R.id.post_img);
+
     }
 
     protected void createTable() {
@@ -58,7 +62,7 @@ public class dbAction extends AppCompatActivity {
         database.execSQL(sql);
     }
 
-    public void executeQuery(String sel_category) {
+    public String executeQuery(String sel_category) {
         println("executeQuery 호출됨.");
 
         String sql = "select * from post where category = "
@@ -66,7 +70,7 @@ public class dbAction extends AppCompatActivity {
         Cursor cursor = database.rawQuery(sql, null);
         int recordCount = cursor.getCount();
         println("레코드 개수 : " + recordCount);
-
+        String uris = null;
         for (int i = 0; i < recordCount; i++) {
             cursor.moveToNext();
 
@@ -76,10 +80,12 @@ public class dbAction extends AppCompatActivity {
             String content = cursor.getString(3);
             String photo = cursor.getString(4);
             String rdate = cursor.getString(5);
-
+            uris = photo;
             println("레코드 #" + i + " : " + id + ", " + category + ", " + ch_content + ", " + content+ ", " + photo + ", " + rdate+"\n");
         }
         cursor.close();
+
+        return uris;
     }
 
     public void delTable() { // 테이블 초기화 하는거임
@@ -97,6 +103,14 @@ public class dbAction extends AppCompatActivity {
         database.execSQL(sql);
     }
 
+    public void setImage(String path){
+        String imagepath = path;
+        if (imagepath != null && !imagepath.equals("")) {
+            post_img.setImageURI(Uri.parse("file://" + imagepath));
+        } else {
+            post_img.setImageResource(R.drawable.gradation); // 사진 없으면 약 아이콘으로 설정
+        }
+    }
 
     public void println(String data) {
         textView.append(data);

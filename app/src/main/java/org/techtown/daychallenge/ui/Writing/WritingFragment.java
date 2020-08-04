@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -24,18 +25,23 @@ import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 
 public class WritingFragment extends Fragment {
     private Context context;
     ImageView picture_img;
     dbAction dayDB;
+    Uri uri;
+    public String imagePath1 ="";
+    static final int REQUEST_CODE=1;
+
+    dbAction dbdb = (dbAction) getActivity();
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         context = container.getContext();
+
 
         // 닫기버튼 누르면 Challenge로 넘어가도록 - 2020.07.30 송고은
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
@@ -58,11 +64,12 @@ public class WritingFragment extends Fragment {
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(3);
 
-                // 이후에 해야할 작업 db 챌린지들 불러와서 여기에 넣어야함, 이미지 파일 작업
+                // 이후에 해야할 작업 챌린지 DB 생성해서 insert 파싱하기
                 EditText con = rootView.findViewById(R.id.contentsInput);
                 String contents = con.getText().toString();
                 dayDB = new dbAction();
-                dayDB.insertRecord("post", dayDB.cate, "음악 들어", contents, "photo.img");
+                String imageUri = uri.toString();
+                dayDB.insertRecord("post", dayDB.cate, "음악 들어", contents, imageUri);
                 con.setText("");
             }
         });
@@ -81,8 +88,8 @@ public class WritingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
-                startActivityForResult(intent, 101);
+                intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
@@ -104,21 +111,21 @@ public class WritingFragment extends Fragment {
         }
     }
 
+    // 2020.08.04 카메라 저장 코드
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 101 && resultCode == RESULT_OK) {
-            try {
-                InputStream is = getActivity().getContentResolver().openInputStream(data.getData());
-                Bitmap bm = BitmapFactory.decodeStream(is);
-                is.close();
-                picture_img.setImageBitmap(bm);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else if(requestCode == 101 && resultCode == RESULT_CANCELED){
-                Toast.makeText(context,"취소", Toast.LENGTH_SHORT).show();
-        }
+        super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode == REQUEST_CODE) { uri = data.getData(); }
+        setImage(uri);
     }
+
+    private void setImage(Uri uri) {
+        try{
+            InputStream in = context.getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(in);
+            picture_img.setImageBitmap(bitmap); }
+        catch (FileNotFoundException e){ e.printStackTrace(); }
+    }
+
 
 }
