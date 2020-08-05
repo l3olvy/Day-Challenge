@@ -24,7 +24,6 @@ public class dbAction extends AppCompatActivity {
     protected void createDatabase() {
         dbHelper = new DatabaseHelper(this);
         database = dbHelper.getWritableDatabase();
-        post_img = findViewById(R.id.post_img);
 
     }
 

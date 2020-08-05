@@ -44,7 +44,7 @@ public class MainActivity extends dbAction {
         // 작업 내용 - 앱을 처음 실행 했을 경우에만 DB, TABLE 생성함
         prefs = getSharedPreferences("Pref", MODE_PRIVATE); // 생성하기
         checkFirstRun(); // 앱을 처음 실행했는지 확인하는 함수
-        // delTable(); //Data가 많아져서 지저분 해졌을 경우에 table 자체를 삭제하고 생성함
+        //delTable(); //Data가 많아져서 지저분 해졌을 경우에 table 자체를 삭제하고 생성함
 
         categoryFragment = new CategoryFragment();
         challengeFragment = new ChallengeFragment();
