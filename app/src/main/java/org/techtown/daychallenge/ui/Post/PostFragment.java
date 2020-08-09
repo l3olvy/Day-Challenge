@@ -1,5 +1,6 @@
 package org.techtown.daychallenge.ui.Post;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -29,9 +30,9 @@ public class PostFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post, container, false);
-
-        dayDB = new dbAction();
-        dayDB.textView = rootView.findViewById(R.id.textView3);
+        Context context = container.getContext();
+        dayDB = new dbAction(context);
+        dayDB.txt = rootView.findViewById(R.id.textView3);
         post_img = rootView.findViewById(R.id.post_img);
         Uri uris = Uri.parse(dayDB.executeQuery(dayDB.cate));
         setImage(uris);

@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,15 +32,11 @@ public class WritingFragment extends Fragment {
     ImageView picture_img;
     dbAction dayDB;
     Uri uri;
-    public String imagePath1 ="";
     static final int REQUEST_CODE=1;
-
-    dbAction dbdb = (dbAction) getActivity();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         context = container.getContext();
-
 
         // 닫기버튼 누르면 Challenge로 넘어가도록 - 2020.07.30 송고은
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
@@ -54,7 +49,6 @@ public class WritingFragment extends Fragment {
             }
         });
 
-
         // 2020.08.04 송고은
         Button save_btn = rootView.findViewById(R.id.saveBtn);
         save_btn.setOnClickListener(new View.OnClickListener() {
@@ -64,12 +58,12 @@ public class WritingFragment extends Fragment {
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(3);
 
-                // 이후에 해야할 작업 챌린지 DB 생성해서 insert 파싱하기
                 EditText con = rootView.findViewById(R.id.contentsInput);
                 String contents = con.getText().toString();
-                dayDB = new dbAction();
+                dayDB = new dbAction(context);
                 String imageUri = uri.toString();
-                dayDB.insertRecord("post", dayDB.cate, "음악 들어", contents, imageUri);
+                String recon = dayDB.reCon(activity.idx);
+                dayDB.insertRecord("post", dayDB.cate, recon, contents, imageUri);
                 con.setText("");
             }
         });
@@ -105,7 +99,7 @@ public class WritingFragment extends Fragment {
             for (int i = 0; i < length; i++) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     // 동의
-                    Log.d("MainActivity","권한 허용 : " + permissions[i]);
+                    // Log.d("MainActivity","권한 허용 : " + permissions[i]);
                 }
             }
         }

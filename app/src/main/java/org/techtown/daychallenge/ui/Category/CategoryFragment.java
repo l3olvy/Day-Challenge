@@ -20,7 +20,7 @@ public class CategoryFragment extends Fragment {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_category, container, false);
 
-        dbAction dayDB = new dbAction();
+        dbAction dayDB = new dbAction(getContext());
         // 각 카테고리마다 db category로 바뀌도록
 
         Button music_btn = rootView.findViewById(R.id.btn_music);

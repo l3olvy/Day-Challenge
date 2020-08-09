@@ -6,26 +6,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    public static String NAME = "dayChallenge.db";
-    public static int VERSION = 1;
-
+    Context mContext;
     public DatabaseHelper(Context context) {
-        super(context, NAME, null, VERSION);
+        // super(context, NAME, null, VERSION);
+        super(context, "dayChallenge.db", null, 1);
+        mContext = context;
     }
 
     public void onCreate(SQLiteDatabase db) {
-        println("onCreate 호출됨");
 
-        String sql = "create table if not exists post ("
-                + " _id integer PRIMARY KEY autoincrement, "
-                + " category text, "
-                + " ch_content text, "
-                + " content text, "
-                + " photo text, "
-                + " rdate text "
-                + " )";
-
-        db.execSQL(sql);
     }
 
     public void onOpen(SQLiteDatabase db) {
@@ -33,11 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        println("onUpgrade 호출됨 : " + oldVersion + " -> " + newVersion);
 
-        if (newVersion > 1) {
-            db.execSQL("DROP TABLE IF EXISTS post");
-        }
     }
 
     public void println(String data) {

@@ -1,8 +1,9 @@
 package org.techtown.daychallenge;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Build;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,57 +17,44 @@ import java.time.LocalDate;
 import java.util.Locale;
 
 public class dbAction extends AppCompatActivity {
-    static DatabaseHelper dbHelper;
-    static SQLiteDatabase database;
-    public static String cate = null;
-    public TextView textView;
+    public static String cate;
+    SQLiteDatabase db;
+    ContentValues row;
+    Context ctx;
+    public TextView txt;
+    DatabaseHelper mHelper;
     public ImageView post_img;
-    protected void createDatabase() {
-        dbHelper = new DatabaseHelper(this);
-        database = dbHelper.getWritableDatabase();
 
+    public dbAction(Context ctx) {
+        this.ctx = ctx;
+        mHelper = new DatabaseHelper(ctx);
     }
 
-    protected void createTable() {
-        if (database == null) {
-            println("데이터베이스를 먼저 생성하세요.");
-            return;
-        }
-    }
+    public void selectData() {
+        db = mHelper.getReadableDatabase();
+        Cursor cursor;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void insertRecord(String tableName, String cate, String ch_con, String cons, String photo) {
-        //database = dbHelper.getWritableDatabase();
-        if (database == null) {
-            println("데이터베이스를 먼저 생성하세요.");
-            return;
-        }
+        cursor = db.rawQuery("select * from 'challenge' where category='DRAWING' ", null);
 
-        if (tableName == null) {
-            println("테이블을 먼저 생성하세요.");
-            return;
+        while(cursor.moveToNext()) {
+            String a = cursor.getString(0);
+            String b = cursor.getString(1);
+            String c = cursor.getString(2);
+
+            //txt.append(a+" "+b+" "+c+" \n");
+            //Log.d("data ----------", a+" "+b+" "+c+" \n");
         }
 
-        long now = System.currentTimeMillis();
-        LocalDate mDate = LocalDate.now();
-        Date dates = new Date(now);
-        SimpleDateFormat dateNow = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
-        String strnow = dateNow.format(dates);
-
-        String sql = "insert into " + tableName
-                + "(category, ch_content, content, photo, rdate) "
-                + " values "
-                + "('"+cate+"','"+ch_con+"','"+cons+"','"+photo+"','"+strnow+"')";
-
-        database.execSQL(sql);
+        cursor.close();
+        mHelper.close();
     }
 
     public String executeQuery(String sel_category) {
-        println("executeQuery 호출됨.");
+        db = mHelper.getReadableDatabase();
 
         String sql = "select * from post where category = "
                 + "'"+sel_category+"'";
-        Cursor cursor = database.rawQuery(sql, null);
+        Cursor cursor = db.rawQuery(sql, null);
         int recordCount = cursor.getCount();
         println("레코드 개수 : " + recordCount);
         String uris = null;
@@ -83,36 +71,62 @@ public class dbAction extends AppCompatActivity {
             println("레코드 #" + i + " : " + id + ", " + category + ", " + ch_content + ", " + content+ ", " + photo + ", " + rdate+"\n");
         }
         cursor.close();
-
+        mHelper.close();
         return uris;
     }
 
-    public void delTable() { // 테이블 초기화 하는거임
-        database.execSQL("DROP TABLE IF EXISTS post");
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void insertRecord(String tableName, String cate, String ch_con, String cons, String photo) {
+        db = mHelper.getWritableDatabase();
 
-        String sql = "create table if not exists post ("
-                + " _id integer PRIMARY KEY autoincrement, "
-                + " category text, "
-                + " ch_content text, "
-                + " content text, "
-                + " photo text, "
-                + " rdate text "
-                + " )";
+        long now = System.currentTimeMillis();
+        LocalDate mDate = LocalDate.now();
+        Date dates = new Date(now);
+        SimpleDateFormat dateNow = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+        String strnow = dateNow.format(dates);
 
-        database.execSQL(sql);
+        String sql = "insert into '" +tableName+"'"
+                + "(category, ch_content, content, photo, rdate) "
+                + " values "
+                + "('"+cate+"','"+ch_con+"','"+cons+"','"+photo+"','"+strnow+"')";
+
+        db.execSQL(sql);
+        mHelper.close();
     }
 
-    public void setImage(String path){
-        String imagepath = path;
-        if (imagepath != null && !imagepath.equals("")) {
-            post_img.setImageURI(Uri.parse("file://" + imagepath));
-        } else {
-            post_img.setImageResource(R.drawable.gradation); // 사진 없으면 약 아이콘으로 설정
-        }
+
+    public void delTable() { // 테이블 초기화 하는거임
+//        database.execSQL("DROP TABLE IF EXISTS post");
+//
+//        String sql = "create table if not exists post ("
+//                + " _id integer PRIMARY KEY autoincrement, "
+//                + " category text, "
+//                + " ch_content text, "
+//                + " content text, "
+//                + " photo text, "
+//                + " rdate text "
+//                + " )";
+//
+//        database.execSQL(sql);
+    }
+
+    public String reCon(int idx) {
+        db = mHelper.getReadableDatabase();
+
+        String sql = "select * from challenge where _id = "
+                + idx;
+
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToNext();
+        String recon = cursor.getString(2);
+        cursor.close();
+        mHelper.close();
+        return recon;
     }
 
     public void println(String data) {
-        textView.append(data);
+        txt.append(data);
     }
+
 
 }

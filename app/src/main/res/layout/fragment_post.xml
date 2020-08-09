@@ -34,6 +34,7 @@
                 android:id="@+id/post_img"
                 android:layout_width="350dp"
                 android:layout_height="350dp"
+                android:scaleType="fitXY"
                 app:srcCompat="@drawable/test" />
         </RelativeLayout>
 
@@ -51,9 +52,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:gravity="center|center_horizontal"
-                android:hint="여기에 작성된 내용이 올라옵니다. 밑줄은 함수로 만들어야 할 것 같아요.
-다음줄로 넘어가는 것은 글자를 몇개로 할지는 몰라서 그냥 대충 300으로 해놓았어
-\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n끼룩끼룩"
+                android:hint="여기에 작성된 내용이 올라옵니다."
                 android:textStyle="bold|italic" />
         </ScrollView>
 

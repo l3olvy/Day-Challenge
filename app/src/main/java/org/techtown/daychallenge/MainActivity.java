@@ -1,14 +1,18 @@
 package org.techtown.daychallenge;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -21,15 +25,21 @@ import org.techtown.daychallenge.ui.Post.PostFragment;
 import org.techtown.daychallenge.ui.Writing.WritingFragment;
 import org.techtown.daychallenge.ui.none.NoneFragment;
 
-public class MainActivity extends dbAction {
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
+public class MainActivity extends AppCompatActivity {
+    public int idx;
+    dbAction pdb;
     CategoryFragment categoryFragment;
     ChallengeFragment challengeFragment;
     NoneFragment noneFragment;
     WritingFragment writingFragment;
     PostFragment postFragment;
     FeedFragment feedFragment;
-
     BottomNavigationView navView;
 
     public SharedPreferences prefs;
@@ -40,10 +50,18 @@ public class MainActivity extends dbAction {
         setContentView(R.layout.activity_main);
         checkSelfPermission();
 
-        // 2020.08.03 송고은
-        // 작업 내용 - 앱을 처음 실행 했을 경우에만 DB, TABLE 생성함
-        prefs = getSharedPreferences("Pref", MODE_PRIVATE); // 생성하기
-        checkFirstRun(); // 앱을 처음 실행했는지 확인하는 함수
+        // 2020.08.09 DB 복사
+        Context mContext = getApplicationContext();
+        pdb = new dbAction(mContext);
+        try {
+            boolean bResult = isCheckDB(mContext);
+            if(!bResult) {
+                copyDB(mContext);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         //delTable(); //Data가 많아져서 지저분 해졌을 경우에 table 자체를 삭제하고 생성함
 
         categoryFragment = new CategoryFragment();
@@ -79,15 +97,56 @@ public class MainActivity extends dbAction {
         */
     }
 
-    // 2020.08.04 송고은
-    public void checkFirstRun() {
-        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
-        // 앱 처음 실행했는지 확인하는 조건문
-        if (isFirstRun) { // ture인 경우 처음 실행하는 것
-            createDatabase();
-            createTable();
+    public boolean isCheckDB(Context mContext) {
+        String filePath = "/data/data/org.techtown.daychallenge/databases/dayChallenge.db";
+        File file = new File(filePath);
+        if(file.exists()) return true;
+        return false;
+    }
+
+    public void copyDB(Context mContext) {
+        Log.d("MINP", "COPYDB");
+        AssetManager manager = mContext.getAssets();
+        String folderPath = "/data/data/org.techtown.daychallenge/databases";
+        String filePath = "/data/data/org.techtown.daychallenge/databases/dayChallenge.db";
+        File folder = new File(folderPath);
+        File file = new File(filePath);
+
+        FileOutputStream fos = null;
+        BufferedOutputStream bos = null;
+        try {
+            InputStream is = manager.open("dbInit.db");
+            BufferedInputStream bis = new BufferedInputStream(is);
+
+            if(folder.exists()) {
+
+            } else {
+                folder.mkdirs();
+            }
+
+            if(file.exists()) {
+                file.delete();
+                file.createNewFile();
+            }
+
+            fos = new FileOutputStream(file);
+            bos = new BufferedOutputStream(fos);
+            int read = -1;
+            byte[] buffer = new byte[1024];
+            while((read = bis.read(buffer,0,1024)) != -1) {
+                bos.write(buffer,0,read);
+            }
+
+            bos.flush();
+            bos.close();
+            fos.close();
+            bis.close();
+            is.close();
+        }  catch(Exception e) {
+            Log.d("Error--------------", e.toString());
         }
     }
+
 
     public void checkSelfPermission() {
         String temp = "";
@@ -127,4 +186,5 @@ public class MainActivity extends dbAction {
             getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, postFragment).commit();
         }
     }
+
 }
