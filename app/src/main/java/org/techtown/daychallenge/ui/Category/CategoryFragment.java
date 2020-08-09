@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
+import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
 
 public class CategoryFragment extends Fragment {
 
@@ -27,9 +28,12 @@ public class CategoryFragment extends Fragment {
         music_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
+                //B 이동버튼 클릭할 때 stack에 push
+                MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
-                activity.onFragmentChanged(0);
-                dbAction.cate = "MUSIC";
+                activity.onFragmentChanged(1);
+                ChallengeFragment.cate = "MUSIC"; //B Challenge 프래그먼트의 loadNoteListData(cate) 인자로 전달
             }
         });
 
@@ -37,9 +41,12 @@ public class CategoryFragment extends Fragment {
         drawing_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
+                //B 이동버튼 클릭할 때 stack에 push
+                MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
-                activity.onFragmentChanged(0);
-                dbAction.cate = "DRAWING";
+                activity.onFragmentChanged(1);
+                ChallengeFragment.cate = "DRAWING";
             }
         });
 
@@ -47,9 +54,12 @@ public class CategoryFragment extends Fragment {
         happiness_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
+                //B 이동버튼 클릭할 때 stack에 push
+                MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
-                activity.onFragmentChanged(0);
-                dbAction.cate = "HAPPINESS";
+                activity.onFragmentChanged(1);
+                ChallengeFragment.cate = "HAPPINESS";
             }
         });
 

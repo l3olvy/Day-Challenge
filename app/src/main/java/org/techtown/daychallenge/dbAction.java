@@ -1,8 +1,8 @@
 package org.techtown.daychallenge;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Build;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,7 +17,8 @@ import java.util.Locale;
 
 public class dbAction extends AppCompatActivity {
     static DatabaseHelper dbHelper;
-    static SQLiteDatabase database;
+    public static SQLiteDatabase database;
+
     public static String cate = null;
     public TextView textView;
     public ImageView post_img;
@@ -30,7 +31,7 @@ public class dbAction extends AppCompatActivity {
 
     protected void createTable() {
         if (database == null) {
-            println("데이터베이스를 먼저 생성하세요.");
+            //println("데이터베이스를 먼저 생성하세요.");
             return;
         }
     }
@@ -39,12 +40,12 @@ public class dbAction extends AppCompatActivity {
     public void insertRecord(String tableName, String cate, String ch_con, String cons, String photo) {
         //database = dbHelper.getWritableDatabase();
         if (database == null) {
-            println("데이터베이스를 먼저 생성하세요.");
+            //println("데이터베이스를 먼저 생성하세요.");
             return;
         }
 
         if (tableName == null) {
-            println("테이블을 먼저 생성하세요.");
+            //println("테이블을 먼저 생성하세요.");
             return;
         }
 
@@ -63,13 +64,13 @@ public class dbAction extends AppCompatActivity {
     }
 
     public String executeQuery(String sel_category) {
-        println("executeQuery 호출됨.");
+        //println("executeQuery 호출됨.");
 
         String sql = "select * from post where category = "
                 + "'"+sel_category+"'";
         Cursor cursor = database.rawQuery(sql, null);
         int recordCount = cursor.getCount();
-        println("레코드 개수 : " + recordCount);
+        //println("레코드 개수 : " + recordCount);
         String uris = null;
         for (int i = 0; i < recordCount; i++) {
             cursor.moveToNext();
@@ -81,7 +82,8 @@ public class dbAction extends AppCompatActivity {
             String photo = cursor.getString(4);
             String rdate = cursor.getString(5);
             uris = photo;
-            println("레코드 #" + i + " : " + id + ", " + category + ", " + ch_content + ", " + content+ ", " + photo + ", " + rdate+"\n");
+            //println("레코드 #" + i + " : " + id + ", " + category + ", " + ch_content + ", " + content+ ", " + photo + ", " + rdate+"\n");
+            println(content);
         }
         cursor.close();
 
@@ -103,17 +105,8 @@ public class dbAction extends AppCompatActivity {
         database.execSQL(sql);
     }
 
-    public void setImage(String path){
-        String imagepath = path;
-        if (imagepath != null && !imagepath.equals("")) {
-            post_img.setImageURI(Uri.parse("file://" + imagepath));
-        } else {
-            post_img.setImageResource(R.drawable.gradation); // 사진 없으면 약 아이콘으로 설정
-        }
-    }
-
     public void println(String data) {
-        textView.append(data);
+        textView.setText(data);
     }
 
 }
