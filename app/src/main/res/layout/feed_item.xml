@@ -3,16 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginRight="4dp"
-    android:layout_marginBottom="4dp"
-    app:cardElevation="5dp">
+    android:layout_marginLeft="2dp"
+    android:layout_marginBottom="2dp"
+    >
 
     <ImageView
         android:id="@+id/pictureImageView1"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:scaleType="fitXY"/>
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:scaleType="fitXY" />
 
 </androidx.cardview.widget.CardView>
