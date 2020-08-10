@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import java.io.InputStream;
 
 
 public class PostFragment extends Fragment {
+    dbAction dayDB = new dbAction(getContext());
     Context context;
     OnTabItemSelectedListener listener;
     TextView contentsInput;
@@ -39,6 +39,9 @@ public class PostFragment extends Fragment {
     int mMode = MODE_INSERT;
     Feed item = null;
     Challenge item2 = null;
+
+    String picture;
+    String content;
 
     @Override //B 프래그먼트를 Activity에 attach 할 때 호출
     public void onAttach(Context context) {
@@ -66,15 +69,13 @@ public class PostFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post, container, false);
-        dbAction dayDB = new dbAction(getContext());
+
+
         initUI(rootView);
-//        applyItem(rootView, db);
-        //contentsInput.setText("");
-        dayDB.txt = rootView.findViewById(R.id.textView3);
-        Uri uris = Uri.parse(dayDB.executeQuery(dayDB.cate));
-        setPicture(uris);
+
+        applyItem();
+
         return rootView;
     }
 
@@ -102,45 +103,54 @@ public class PostFragment extends Fragment {
         this.item = item;
     }
     public void setItem2(Challenge item2){this.item2 = item2;}
+    public void setItem3(String picture, String content){ this.picture = picture; this.content = content;}
 
     public void applyItem() {
 
-            if (item != null) { // feed
-                mMode = MODE_MODIFY;
+        if (item != null) { //Feed
+            mMode = MODE_MODIFY;
 
-                setContents(item.getContent());
+            setContents(item.getContent());
 
-                String picturePath = item.getPicture();
-                if (picturePath == null || picturePath.equals("")) {
-                    pictureImageView.setImageResource(R.drawable.gradation);
-                } else {
-                    Uri uri = Uri.parse(picturePath);
-                    mMode = MODE_INSERT;
-                    setPicture(uri);
-                }
-
-                Log.d("ssssssssssssssss", "if1");
-
-            } else if (item2 != null) { // 챌린지에 있는 아이템을 클릭했을 때
-                mMode = MODE_MODIFY;
-
-                setContents(item2.getContent());
-
-                String picturePath = item2.getPicture();
-                if (picturePath == null || picturePath.equals("")) {
-                    pictureImageView.setImageResource(R.drawable.gradation);
-                } else {
-                    Uri uri = Uri.parse(picturePath);
-                    mMode = MODE_INSERT;
-                    setPicture(uri);
-                }
-                Log.d("ssssssssssssssss", "if2");
-
+            String picturePath = item.getPicture();
+            if (picturePath == null || picturePath.equals("")) {
+                pictureImageView.setImageResource(R.drawable.gradation);
+            } else {
+                Uri uri = Uri.parse(picturePath);
+                mMode = MODE_INSERT;
+                setPicture(uri);
             }
-            Log.d("ssssssssssssssss", "안되네?");
+
+        } else if (item2 != null) { // Challenge
+            mMode = MODE_MODIFY;
+
+            setContents(item2.getContent());
+
+            String picturePath = item2.getPicture();
+            if (picturePath == null || picturePath.equals("")) {
+                pictureImageView.setImageResource(R.drawable.gradation);
+            } else {
+                Uri uri = Uri.parse(picturePath);
+                mMode = MODE_INSERT;
+                setPicture(uri);
+            }
+
+        } else {
+            mMode = MODE_MODIFY;
+
+            setContents(content);
+
+            String picturePath = picture;
+            if (picturePath == null || picturePath.equals("")) {
+                pictureImageView.setImageResource(R.drawable.gradation);
+            } else {
+                Uri uri = Uri.parse(picturePath);
+                mMode = MODE_INSERT;
+                setPicture(uri);
+            }
 
         }
 
-
+    }
 
 }

@@ -2,7 +2,6 @@ package org.techtown.daychallenge;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -42,9 +41,8 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
     WritingFragment writingFragment;
     PostFragment postFragment;
     FeedFragment feedFragment;
-    BottomNavigationView navView;
 
-    public SharedPreferences prefs;
+    BottomNavigationView navView;
 
     public static Stack<Fragment> fragmentStack; //B 뒤로가기 누를 때 현재 프래그먼트 정보가 쌓일 스택
     public static FragmentManager manager;
@@ -231,6 +229,14 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.nav_host_fragment, postFragment).commit();
 
+    }
+
+    public void showPostFragment3(String picture, String content){
+        postFragment = new PostFragment();
+        postFragment.setItem3(picture, content);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.nav_host_fragment, postFragment).commit();
     }
 
 }

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
+import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -64,15 +66,18 @@ public class WritingFragment extends Fragment {
                 //B 이동버튼 클릭할 때 stack에 push
                 MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
-                activity.onFragmentChanged(4); //B Post로 전환
 
                 EditText con = rootView.findViewById(R.id.contentsInput);
                 String contents = con.getText().toString();
+                setImage(uri);
                 dayDB = new dbAction(context);
                 String imageUri = uri.toString();
-                String recon = dayDB.reCon(activity.idx);
-                dayDB.insertRecord("post", dayDB.cate, recon, contents, imageUri);
+
+                dayDB.insertRecord("post", ChallengeFragment.cate, "음악 들어", contents, imageUri);
+                activity.showPostFragment3(imageUri, contents);
                 con.setText("");
+                activity.onFragmentChanged(4); //B Post로 전환
+
             }
 
         });
@@ -117,7 +122,7 @@ public class WritingFragment extends Fragment {
             for (int i = 0; i < length; i++) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     // 동의
-                    // Log.d("MainActivity","권한 허용 : " + permissions[i]);
+                    Log.d("MainActivity","권한 허용 : " + permissions[i]);
                 }
             }
         }
@@ -139,7 +144,8 @@ public class WritingFragment extends Fragment {
         try{
             InputStream in = context.getContentResolver().openInputStream(uri);
             Bitmap bitmap = BitmapFactory.decodeStream(in);
-            picture_img.setImageBitmap(bitmap); }
+            picture_img.setImageBitmap(bitmap);
+        }
         catch (FileNotFoundException e){ e.printStackTrace(); }
     }
 

@@ -20,6 +20,8 @@ import org.techtown.daychallenge.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
 
+import java.util.ArrayList;
+
 public class ChallengeFragment extends Fragment {
     RecyclerView recyclerView;
     ChallengeAdapter adapter;
@@ -64,10 +66,6 @@ public class ChallengeFragment extends Fragment {
                 //B 이동버튼 클릭할 때 stack에 push
                 MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
-                activity.onFragmentChanged(2);
-                // 챌린지 내용 불러오면서 idx도 설정해줌
-                activity.idx = 2;
-
                 activity.onFragmentChanged(3); //B Writing 화면으로 전환
             }
         });
@@ -75,7 +73,7 @@ public class ChallengeFragment extends Fragment {
         initUI(rootView);
 
         // 데이터 로딩
-        loadChListData(cate);
+        loadNoteListData(cate);
 
         return rootView;
     }
@@ -113,17 +111,20 @@ public class ChallengeFragment extends Fragment {
 
     }
 
-
     /**
      * 리스트 데이터 로딩
      */
-    public void loadChListData(String sel_category) {
+    public int loadNoteListData(String sel_category) {
         dbAction db = new dbAction(getContext());
+        ArrayList datas = db.chSelData(sel_category);
+        ArrayList<Challenge> items = (ArrayList<Challenge>) datas.get(0);
 
-        adapter.setItems(db.ChallengeSel(sel_category)); //B adapter에 데이터 추가
+        int recordCount = (int) datas.get(1);
+        adapter.setItems(items); //B adapter에 데이터 추가
         adapter.notifyDataSetChanged(); //B adatper에 추가가 완료되었다고 알려주는 함수 호출
 
-        //return recordCount;
+
+        return recordCount;
     }
 
 

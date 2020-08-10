@@ -33,7 +33,6 @@ public class CategoryFragment extends Fragment {
                 MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(1);
-                dayDB.cate = "MUSIC";
                 ChallengeFragment.cate = "MUSIC"; //B Challenge 프래그먼트의 loadNoteListData(cate) 인자로 전달
             }
         });
@@ -47,7 +46,6 @@ public class CategoryFragment extends Fragment {
                 MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(1);
-                dayDB.cate = "DRAWING";
                 ChallengeFragment.cate = "DRAWING";
             }
         });
@@ -61,7 +59,6 @@ public class CategoryFragment extends Fragment {
                 MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(1);
-                dayDB.cate = "HAPPINESS";
                 ChallengeFragment.cate = "HAPPINESS";
             }
         });

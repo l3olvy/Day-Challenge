@@ -19,6 +19,8 @@ import org.techtown.daychallenge.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
 
+import java.util.ArrayList;
+
 public class FeedFragment extends Fragment {
 
     RecyclerView recyclerView;
@@ -30,11 +32,8 @@ public class FeedFragment extends Fragment {
 
     @Override //B 프래그먼트를 Activity에 attach 할 때 호출
     public void onAttach(Context context) {
-
         super.onAttach(context);
-
         this.context = context;
-
         if (context instanceof OnTabItemSelectedListener) {
             listener = (OnTabItemSelectedListener) context;
         }
@@ -59,8 +58,7 @@ public class FeedFragment extends Fragment {
         initUI(rootView);
 
         // 데이터 로딩
-        loadFeedListData();
-
+        loadNoteListData();
         return rootView;
     }
 
@@ -76,7 +74,6 @@ public class FeedFragment extends Fragment {
         adapter = new FeedAdapter();
 
         recyclerView.setAdapter(adapter);
-
         adapter.setOnItemClickListener(new OnFeedItemClickListener() {
             @Override
             public void onItemClick(FeedAdapter.ViewHolder holder, View view, int position) {
@@ -102,12 +99,17 @@ public class FeedFragment extends Fragment {
     /**
      * 리스트 데이터 로딩
      */
-    public void loadFeedListData() {
+    public int loadNoteListData() {
         dbAction db = new dbAction(getContext());
-        adapter.setItems(db.FeedSel()); //B adapter에 데이터 추가
+        ArrayList datas = db.feSelData();
+        ArrayList<Feed> items = (ArrayList<Feed>) datas.get(0);
+
+        int recordCount = (int) datas.get(1);
+
+        adapter.setItems(items); //B adapter에 데이터 추가
         adapter.notifyDataSetChanged(); //B adatper에 추가가 완료되었다고 알려주는 함수 호출
 
-       // return recordCount;
+        return recordCount;
     }
 
 }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,10 +55,9 @@ public class dbAction extends AppCompatActivity {
 
         String sql = "select * from post where category = "
                 + "'"+sel_category+"'";
-        Log.d("sql - ---------------", sql);
         Cursor cursor = db.rawQuery(sql, null);
         int recordCount = cursor.getCount();
-        println("레코드 개수 : " + recordCount);
+        //println("레코드 개수 : " + recordCount);
         String uris = null;
         for (int i = 0; i < recordCount; i++) {
             cursor.moveToNext();
@@ -71,7 +69,8 @@ public class dbAction extends AppCompatActivity {
             String photo = cursor.getString(4);
             String rdate = cursor.getString(5);
             uris = photo;
-            println("레코드 #" + i + " : " + id + ", " + category + ", " + ch_content + ", " + content+ ", " + photo + ", " + rdate+"\n");
+            //println("레코드 #" + i + " : " + id + ", " + category + ", " + ch_content + ", " + content+ ", " + photo + ", " + rdate+"\n");
+            println(content);
         }
         cursor.close();
         mHelper.close();
@@ -127,42 +126,17 @@ public class dbAction extends AppCompatActivity {
         return recon;
     }
 
-    public ArrayList<Feed> FeedSel() {
-        db = mHelper.getReadableDatabase();
-        int recordCount = -1;
-
-        ArrayList<Feed> items = new ArrayList<Feed>();
-
-        //B post 테이블에서 id 역순으로 데이터 갖고 오도록
-        String sql = "select _id, content, photo from post order by _id desc";
-
-        Cursor cursor = db.rawQuery(sql, null);
-        recordCount = cursor.getCount();
-
-        for (int i = 0; i < recordCount; i++) {
-            cursor.moveToNext();
-
-            int id = cursor.getInt(0);
-            String content = cursor.getString(1);
-            String photo = cursor.getString(2);
-
-            items.add(new Feed(id, content, photo));
-        }
-        cursor.close();
-        mHelper.close();
-
-        return items;
+    public void println(String data) {
+        txt.append(data);
     }
 
-    public ArrayList<Challenge> ChallengeSel(String sel_category) {
+
+    public ArrayList chSelData(String sel_category) {
         db = mHelper.getReadableDatabase();
-        int recordCount = -1;
-
+        ArrayList datas = new ArrayList();
         ArrayList<Challenge> items = new ArrayList<Challenge>();
-
-        //B post 테이블에서 id 역순으로 카테고리에 따라 데이터 갖고 오도록
-        String sql = "select * from post where category="+"'"+sel_category+"'"+" order by _id desc";
-        Log.d("db-------------", sql);
+        int recordCount = -1;
+        String sql = "select * from post where category = " + "'"+sel_category+"'" + "order by _id desc";
         Cursor cursor = db.rawQuery(sql, null);
         recordCount = cursor.getCount();
 
@@ -178,14 +152,38 @@ public class dbAction extends AppCompatActivity {
             items.add(new Challenge(id, ch_content, content, photo, rdate));
         }
         cursor.close();
-        mHelper.close();
 
-        return items;
+        datas.add(items);
+        datas.add(recordCount);
+
+        return datas;
     }
 
-    public void println(String data) {
-        txt.append(data);
+    public ArrayList feSelData() {
+        db = mHelper.getReadableDatabase();
+
+        ArrayList datas = new ArrayList();
+        int recordCount = -1;
+        ArrayList<Feed> items = new ArrayList<Feed>();
+
+        //B post 테이블에서 id 역순으로 데이터 갖고 오도록
+        String sql = "select _id, content, photo from post order by _id desc";
+        Cursor cursor = db.rawQuery(sql, null);
+        recordCount = cursor.getCount();
+
+        for (int i = 0; i < recordCount; i++) {
+            cursor.moveToNext();
+
+            int id = cursor.getInt(0);
+            String content = cursor.getString(1);
+            String photo = cursor.getString(2);
+
+            items.add(new Feed(id, content, photo));
+        }
+        cursor.close();
+        datas.add(items);
+        datas.add(recordCount);
+
+        return datas;
     }
-
-
 }
