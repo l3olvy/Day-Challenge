@@ -1,15 +1,20 @@
 package org.techtown.daychallenge;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.techtown.daychallenge.ui.Challenge.Challenge;
+import org.techtown.daychallenge.ui.Feed.Feed;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -25,6 +30,7 @@ public class dbAction extends AppCompatActivity {
     public TextView txt;
     DatabaseHelper mHelper;
     public ImageView post_img;
+    String ch_content;
 
     public dbAction(Context ctx) {
         this.ctx = ctx;
@@ -167,7 +173,7 @@ public class dbAction extends AppCompatActivity {
         ArrayList<Feed> items = new ArrayList<Feed>();
 
         //B post 테이블에서 id 역순으로 데이터 갖고 오도록
-        String sql = "select _id, content, photo from post order by _id desc";
+        String sql = "select _id, ch_content, content, photo from post order by _id desc";
         Cursor cursor = db.rawQuery(sql, null);
         recordCount = cursor.getCount();
 
@@ -175,10 +181,11 @@ public class dbAction extends AppCompatActivity {
             cursor.moveToNext();
 
             int id = cursor.getInt(0);
-            String content = cursor.getString(1);
-            String photo = cursor.getString(2);
+            String ch_content = cursor.getString(1);
+            String content = cursor.getString(2);
+            String photo = cursor.getString(3);
 
-            items.add(new Feed(id, content, photo));
+            items.add(new Feed(id, ch_content, content, photo));
         }
         cursor.close();
         datas.add(items);
@@ -186,4 +193,43 @@ public class dbAction extends AppCompatActivity {
 
         return datas;
     }
+
+    public ArrayList getChallenge(String sel_category) {
+        db = mHelper.getReadableDatabase();
+
+        ArrayList<ChContent> items = new ArrayList<ChContent>();
+
+        String sql = "select * from challenge where category = " + "'" + sel_category + "'" + " and enable is null order by random() limit 1";
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            String category = cursor.getString(1);
+            ch_content = cursor.getString(2);
+            int enable = cursor.getInt(3);
+            items.add(new ChContent(id, category, ch_content, enable));
+            Log.d("test-----------", category);
+            Log.d("sql---------------",sql);
+
+            cursor.close();
+            mHelper.close();
+            return items;
+
+        }else{
+            return null;
+        }
+    }
+    public void enable(Integer id){
+        db = mHelper.getWritableDatabase();
+
+            String sql = "update challenge set " +
+                    "   enable = 1" +
+                    " where " +
+                    "   _id = " + id;
+
+        db.execSQL(sql);
+
+    }
+
 }

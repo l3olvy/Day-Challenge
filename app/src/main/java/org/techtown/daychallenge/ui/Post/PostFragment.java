@@ -16,9 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import org.techtown.daychallenge.Challenge;
-import org.techtown.daychallenge.Feed;
-import org.techtown.daychallenge.OnTabItemSelectedListener;
+import org.techtown.daychallenge.ui.Challenge.Challenge;
+import org.techtown.daychallenge.ui.Feed.Feed;
+import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
 
@@ -32,6 +32,7 @@ public class PostFragment extends Fragment {
     OnTabItemSelectedListener listener;
     TextView contentsInput;
     ImageView pictureImageView;
+    TextView challenge;
 
     //B 나중에 데이터 수정 시에 필요할 거 같아서 넣어놓았음
     public static final int MODE_INSERT = 1;
@@ -42,6 +43,7 @@ public class PostFragment extends Fragment {
 
     String picture;
     String content;
+    String ch_content;
 
     @Override //B 프래그먼트를 Activity에 attach 할 때 호출
     public void onAttach(Context context) {
@@ -82,6 +84,7 @@ public class PostFragment extends Fragment {
     private void initUI(ViewGroup rootView) {
         contentsInput = rootView.findViewById(R.id.textView3);
         pictureImageView = rootView.findViewById(R.id.post_img);
+        challenge = rootView.findViewById(R.id.text_post);
     }
 
     public void setContents(String data) {
@@ -103,7 +106,7 @@ public class PostFragment extends Fragment {
         this.item = item;
     }
     public void setItem2(Challenge item2){this.item2 = item2;}
-    public void setItem3(String picture, String content){ this.picture = picture; this.content = content;}
+    public void setItem3(String picture, String ch_content, String content){ this.picture = picture; this.ch_content = ch_content; this.content = content;}
 
     public void applyItem() {
 
@@ -111,6 +114,8 @@ public class PostFragment extends Fragment {
             mMode = MODE_MODIFY;
 
             setContents(item.getContent());
+
+            challenge.setText(item.getCh_content());
 
             String picturePath = item.getPicture();
             if (picturePath == null || picturePath.equals("")) {
@@ -126,6 +131,7 @@ public class PostFragment extends Fragment {
 
             setContents(item2.getContent());
 
+            challenge.setText(item2.getCh_content());
             String picturePath = item2.getPicture();
             if (picturePath == null || picturePath.equals("")) {
                 pictureImageView.setImageResource(R.drawable.gradation);
@@ -139,7 +145,7 @@ public class PostFragment extends Fragment {
             mMode = MODE_MODIFY;
 
             setContents(content);
-
+            challenge.setText(ch_content);
             String picturePath = picture;
             if (picturePath == null || picturePath.equals("")) {
                 pictureImageView.setImageResource(R.drawable.gradation);

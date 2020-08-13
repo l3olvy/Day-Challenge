@@ -1,9 +1,15 @@
 package org.techtown.daychallenge;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,8 +25,11 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.techtown.daychallenge.ui.Category.CategoryFragment;
+import org.techtown.daychallenge.ui.Challenge.Challenge;
 import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
+import org.techtown.daychallenge.ui.Feed.Feed;
 import org.techtown.daychallenge.ui.Feed.FeedFragment;
+import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.ui.Post.PostFragment;
 import org.techtown.daychallenge.ui.Writing.WritingFragment;
 import org.techtown.daychallenge.ui.none.NoneFragment;
@@ -30,10 +39,10 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity implements OnTabItemSelectedListener {
-    public int idx;
     dbAction pdb;
     CategoryFragment categoryFragment;
     ChallengeFragment challengeFragment;
@@ -47,12 +56,13 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
     public static Stack<Fragment> fragmentStack; //B 뒤로가기 누를 때 현재 프래그먼트 정보가 쌓일 스택
     public static FragmentManager manager;
 
+    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkSelfPermission();
-
         // 2020.08.09 DB 복사
         Context mContext = getApplicationContext();
         pdb = new dbAction(mContext);
@@ -99,6 +109,65 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
             }
         });
 
+        // 현재 지정된 시간으로 알람 시간 설정
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+
+
+        // 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
+        if (calendar.before(Calendar.getInstance())) {
+            calendar.add(Calendar.DATE, 1);
+        }
+
+        //이거 없애면 자정에만 챌린지 하나씩 들어옴. 이거는 최초 설치 시 한 번만 챌린지에 내용 넣으려고 쓴건데,
+        //걍 앱 실행할 때마다 넣어져서 나중에 고쳐야할듯. 근데 이거 지우면 자정이 되기 전까지는 챌린지 내용 완료로 떠서 일단은 넣어둠.
+        if(editor == null){
+            dbAction db = new dbAction(this);
+            ChallengeFragment.m_items = db.getChallenge("MUSIC");
+            ChallengeFragment.d_items = db.getChallenge("DRAWING");
+            ChallengeFragment.h_items = db.getChallenge("HAPPINESS");
+        }
+        //  Preference에 설정한 값 저장
+        editor = getSharedPreferences("daily alarm", MODE_PRIVATE).edit();
+        editor.putLong("nextNotifyTime", (long)calendar.getTimeInMillis());
+        editor.apply();
+
+
+        diaryNotification(calendar);
+    }
+
+    void diaryNotification(Calendar calendar)
+    {
+        Boolean dailyNotify = true; // 무조건 알람을 사용
+
+        PackageManager pm = this.getPackageManager();
+        ComponentName receiver = new ComponentName(this, DeviceBootReceiver.class);
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        // 사용자가 매일 알람을 허용했다면
+        if (dailyNotify) {
+            if (alarmManager != null) {
+
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                        AlarmManager.INTERVAL_DAY, pendingIntent);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                }
+            }
+
+            // 부팅 후 실행되는 리시버 사용가능하게 설정
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+
+        }
     }
 
     public boolean isCheckDB(Context mContext) {
@@ -231,12 +300,15 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
 
     }
 
-    public void showPostFragment3(String picture, String content){
+    public void showPostFragment3(String picture, String ch_content, String content){
         postFragment = new PostFragment();
-        postFragment.setItem3(picture, content);
+        postFragment.setItem3(picture, ch_content, content);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.nav_host_fragment, postFragment).commit();
     }
 
+    public void challenge(ChContent item){
+        writingFragment.setItem(item);
+    }
 }

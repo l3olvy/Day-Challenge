@@ -1,4 +1,4 @@
-package org.techtown.daychallenge;
+package org.techtown.daychallenge.ui.Challenge;
 
 public class Challenge {
     int id;

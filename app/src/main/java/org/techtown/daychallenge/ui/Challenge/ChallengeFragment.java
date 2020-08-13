@@ -1,22 +1,26 @@
 package org.techtown.daychallenge.ui.Challenge;
 
+
+import android.app.AlertDialog;
 import android.content.Context;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.techtown.daychallenge.Challenge;
-import org.techtown.daychallenge.ChallengeAdapter;
+import org.techtown.daychallenge.ChContent;
 import org.techtown.daychallenge.MainActivity;
-import org.techtown.daychallenge.OnChallengeItemClickListener;
-import org.techtown.daychallenge.OnTabItemSelectedListener;
+import org.techtown.daychallenge.ui.Interface.OnChallengeItemClickListener;
+import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
 
@@ -29,6 +33,19 @@ public class ChallengeFragment extends Fragment {
     Context context;
     OnTabItemSelectedListener listener;
     public static String cate = null;
+    TextView ch_content;
+
+    String music;
+    String drawing;
+    String happiness;
+
+    ChContent ch_item;
+    Button write_btn;
+
+    public static ArrayList<ChContent> m_items;
+    public static ArrayList<ChContent> d_items;
+    public static ArrayList<ChContent> h_items;
+
 
     @Override //B 프래그먼트를 Activity에 attach 할 때 호출
     public void onAttach(Context context) {
@@ -58,7 +75,9 @@ public class ChallengeFragment extends Fragment {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
 
-        Button write_btn = rootView.findViewById(R.id.write);
+        ch_content = rootView.findViewById(R.id.challengecontent);
+
+        write_btn = rootView.findViewById(R.id.write);
         write_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +93,8 @@ public class ChallengeFragment extends Fragment {
 
         // 데이터 로딩
         loadNoteListData(cate);
+
+        challengeContents(cate);
 
         return rootView;
     }
@@ -127,6 +148,57 @@ public class ChallengeFragment extends Fragment {
         return recordCount;
     }
 
+    public void challengeContents(final String sel_category) {
+        dbAction db = new dbAction(getContext());
+        if (sel_category == "MUSIC") {
+            if (m_items != null) {
+                ch_item = m_items.get(0);
+                music = ch_item.getCh_content();
+                ch_content.setText(music);
+                listener.challenge(ch_item);
+            }else{
+                write_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        completedDialog(sel_category);
+                    }
+                });
+            }
+        } else if (sel_category == "DRAWING") {
+            if (d_items != null) {
+                ch_item = d_items.get(0);
+                drawing = ch_item.getCh_content();
+                ch_content.setText(drawing);
+                listener.challenge(ch_item);
+            }else{
+                write_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        completedDialog(sel_category);
+                    }
+                });
+            }
+        } else if (sel_category == "HAPPINESS") {
+            if (h_items != null) {
+                ch_item = h_items.get(0);
+                happiness = ch_item.getCh_content();
+                ch_content.setText(happiness);
+                listener.challenge(ch_item);
+            }else{
+                write_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        completedDialog(sel_category);
+                    }
+                });
+            }
+        }
+    }
 
-
+    public void completedDialog(String sel_category){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("완성");
+        builder.setMessage(sel_category + "를 완성하였습니다.");
+        builder.show();
+    }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import org.techtown.daychallenge.ChContent;
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
@@ -37,6 +39,7 @@ public class WritingFragment extends Fragment {
     dbAction dayDB;
     Uri uri;
     static final int REQUEST_CODE=1;
+    ChContent item;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,9 +51,7 @@ public class WritingFragment extends Fragment {
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-                //B 이동버튼 클릭할 때 stack에 push
-                MainActivity.fragmentStack.push(currentFragment);
+
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(1); //B Challenge로 전환
             }
@@ -62,19 +63,25 @@ public class WritingFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) { // saveBtn 클릭시
-                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-                //B 이동버튼 클릭할 때 stack에 push
-                MainActivity.fragmentStack.push(currentFragment);
+
                 MainActivity activity = (MainActivity) getActivity();
 
                 EditText con = rootView.findViewById(R.id.contentsInput);
                 String contents = con.getText().toString();
-                setImage(uri);
-                dayDB = new dbAction(context);
-                String imageUri = uri.toString();
 
-                dayDB.insertRecord("post", ChallengeFragment.cate, "음악 들어", contents, imageUri);
-                activity.showPostFragment3(imageUri, contents);
+                dayDB = new dbAction(context);
+                String imageUri;
+                if(uri != null){
+                    imageUri = uri.toString();
+                    setImage(uri);
+                }else{
+                    imageUri = "";
+                }
+
+
+                dayDB.insertRecord("post", ChallengeFragment.cate, item.getCh_content(), contents, imageUri);
+                activity.showPostFragment3(imageUri, item.getCh_content(), contents);
+                dayDB.enable(item.getId());
                 con.setText("");
                 activity.onFragmentChanged(4); //B Post로 전환
 
@@ -86,9 +93,6 @@ public class WritingFragment extends Fragment {
         delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-                //B 이동버튼 클릭할 때 stack에 push
-                MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(1); //B Challenge로 전환
             }
@@ -98,10 +102,6 @@ public class WritingFragment extends Fragment {
         picture_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-                //B 이동버튼 클릭할 때 stack에 push
-                MainActivity.fragmentStack.push(currentFragment);
                 //B 카메라 사용하기 위한 코드(권한?을 위해 데이터 주고받는 느낌)
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
@@ -132,12 +132,15 @@ public class WritingFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-        if(resultCode == Activity.RESULT_CANCELED){
-            Toast.makeText(context, "사진 선택 취소", Toast.LENGTH_LONG).show();
+
+        if (resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(context, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         if (requestCode == REQUEST_CODE) { uri = data.getData(); }
         setImage(uri);
+
     }
 
     private void setImage(Uri uri) {
@@ -149,5 +152,8 @@ public class WritingFragment extends Fragment {
         catch (FileNotFoundException e){ e.printStackTrace(); }
     }
 
+    public void setItem(ChContent item) {
+        this.item = item;
+    }
 
 }
