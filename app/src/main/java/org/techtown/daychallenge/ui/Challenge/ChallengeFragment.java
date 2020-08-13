@@ -5,13 +5,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,7 +23,6 @@ import org.techtown.daychallenge.ui.Interface.OnChallengeItemClickListener;
 import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
-import org.techtown.daychallenge.ui.Writing.WritingFragment;
 
 import java.util.ArrayList;
 
@@ -42,16 +39,12 @@ public class ChallengeFragment extends Fragment {
     String drawing;
     String happiness;
 
-   // int m, d, h;
     ChContent ch_item;
+    Button write_btn;
 
-   // ArrayList<ChContent> m_items;
-    //ArrayList<ChContent> d_items;
-   // ArrayList<ChContent> h_items;
-    //int mm = 0;
-    //int dd = 0;
-    //int hh = 0;
-
+    public static ArrayList<ChContent> m_items;
+    public static ArrayList<ChContent> d_items;
+    public static ArrayList<ChContent> h_items;
 
 
     @Override //B 프래그먼트를 Activity에 attach 할 때 호출
@@ -83,7 +76,9 @@ public class ChallengeFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
         ch_content = rootView.findViewById(R.id.challengecontent);
 
-        Button write_btn = rootView.findViewById(R.id.write);
+        ch_content = rootView.findViewById(R.id.challengecontent);
+
+        write_btn = rootView.findViewById(R.id.write);
         write_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,37 +150,50 @@ public class ChallengeFragment extends Fragment {
         return recordCount;
     }
 
-    public void challengeContents(String sel_category) {
+
+    public void challengeContents(final String sel_category) {
         dbAction db = new dbAction(getContext());
         if (sel_category == "MUSIC") {
-            ArrayList<ChContent> items = db.getChallenge(sel_category);
-            if (items != null) {
-                ch_item = items.get(0);
+            if (m_items != null) {
+                ch_item = m_items.get(0);
                 music = ch_item.getCh_content();
                 ch_content.setText(music);
                 listener.challenge(ch_item);
-            } else {
-                completedDialog(sel_category);
+            }else{
+                write_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        completedDialog(sel_category);
+                    }
+                });
             }
         } else if (sel_category == "DRAWING") {
-            ArrayList<ChContent> items = db.getChallenge(sel_category);
-            if (items != null) {
-                ch_item = items.get(0);
+            if (d_items != null) {
+                ch_item = d_items.get(0);
                 drawing = ch_item.getCh_content();
                 ch_content.setText(drawing);
                 listener.challenge(ch_item);
-            } else {
-                completedDialog(sel_category);
+            }else{
+                write_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        completedDialog(sel_category);
+                    }
+                });
             }
         } else if (sel_category == "HAPPINESS") {
-            ArrayList<ChContent> items = db.getChallenge(sel_category);
-            if (items != null) {
-                ch_item = items.get(0);
+            if (h_items != null) {
+                ch_item = h_items.get(0);
                 happiness = ch_item.getCh_content();
                 ch_content.setText(happiness);
                 listener.challenge(ch_item);
-            } else {
-                completedDialog(sel_category);
+            }else{
+                write_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        completedDialog(sel_category);
+                    }
+                });
             }
         }
     }
@@ -197,3 +205,4 @@ public class ChallengeFragment extends Fragment {
         builder.show();
     }
 }
+

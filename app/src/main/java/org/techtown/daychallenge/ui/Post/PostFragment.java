@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import org.techtown.daychallenge.dbAction;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
 
 public class PostFragment extends Fragment {
     Context context;
@@ -127,6 +125,7 @@ public class PostFragment extends Fragment {
             setContents(item.getContent());
             challenge.setText(item.getCh_content());
             MainActivity.idx = item.getId();
+
             String picturePath = item.getPicture();
             if (picturePath == null || picturePath.equals("")) {
                 pictureImageView.setImageResource(R.drawable.gradation);

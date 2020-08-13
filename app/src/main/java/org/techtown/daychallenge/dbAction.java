@@ -170,7 +170,7 @@ public class dbAction extends AppCompatActivity {
 
         ArrayList<ChContent> items = new ArrayList<ChContent>();
 
-        String sql = "select * from challenge where category = " + "'" + sel_category + "'" + "and enable is null order by random() limit 1";
+        String sql = "select * from challenge where category = " + "'" + sel_category + "'" + " and enable is null order by random() limit 1";
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -185,10 +185,11 @@ public class dbAction extends AppCompatActivity {
             mHelper.close();
             db.close();
             return items;
-        } else{
+        } else {
             return null;
         }
     }
+
     public void enable(Integer id){
         db = mHelper.getWritableDatabase();
 
@@ -214,4 +215,5 @@ public class dbAction extends AppCompatActivity {
         mHelper.close();
         db.close();
     }
+
 }

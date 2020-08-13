@@ -27,7 +27,6 @@ import org.techtown.daychallenge.ChContent;
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
-import org.techtown.daychallenge.ui.Challenge.Challenge;
 import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
 
 import java.io.FileNotFoundException;
@@ -42,6 +41,7 @@ public class WritingFragment extends Fragment {
     static final int REQUEST_CODE=1;
     ChContent item;
     EditText con;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         uri = null;
@@ -49,7 +49,7 @@ public class WritingFragment extends Fragment {
         dayDB = new dbAction(context);
 
         // 닫기버튼 누르면 Challenge로 넘어가도록 - 2020.07.30 송고은
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
+        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
         con = rootView.findViewById(R.id.contentsInput);
         picture_img = rootView.findViewById(R.id.pictureImageView);
         // 수정에서 넘어 온 경우 해당 내용 뿌려짐
@@ -61,9 +61,7 @@ public class WritingFragment extends Fragment {
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-                //B 이동버튼 클릭할 때 stack에 push
-                MainActivity.fragmentStack.push(currentFragment);
+
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(1); //B Challenge로 전환
             }
@@ -76,7 +74,28 @@ public class WritingFragment extends Fragment {
             @Override
             public void onClick(View v) { // saveBtn 클릭시
                 saveBtn(dayDB);
-            }
+
+                MainActivity activity = (MainActivity) getActivity();
+
+                EditText con = rootView.findViewById(R.id.contentsInput);
+                String contents = con.getText().toString();
+
+                dayDB = new dbAction(context);
+                String imageUri;
+                if(uri != null){
+                    imageUri = uri.toString();
+                    setImage(uri);
+                }else{
+                    imageUri = "";
+                }
+
+
+                dayDB.insertRecord("post", ChallengeFragment.cate, item.getCh_content(), contents, imageUri);
+                activity.showPostFragment3(imageUri, item.getCh_content(), contents);
+                dayDB.enable(item.getId());
+                con.setText("");
+                activity.onFragmentChanged(4); //B Post로 전환
+          }
 
         });
 
@@ -84,9 +103,6 @@ public class WritingFragment extends Fragment {
         delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-                //B 이동버튼 클릭할 때 stack에 push
-                MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(1); //B Challenge로 전환
             }
@@ -95,10 +111,6 @@ public class WritingFragment extends Fragment {
         picture_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-                //B 이동버튼 클릭할 때 stack에 push
-                MainActivity.fragmentStack.push(currentFragment);
                 //B 카메라 사용하기 위한 코드(권한?을 위해 데이터 주고받는 느낌)
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
@@ -129,8 +141,9 @@ public class WritingFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-        if(resultCode == Activity.RESULT_CANCELED){
-            Toast.makeText(context, "사진 선택 취소", Toast.LENGTH_LONG).show();
+
+        if (resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(context, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -138,6 +151,7 @@ public class WritingFragment extends Fragment {
             uri = data.getData();
         }
         setImage(uri);
+
     }
 
     private void setImage(Uri uri) {
@@ -181,10 +195,6 @@ public class WritingFragment extends Fragment {
             imageUri = uri.toString();
         } else {
             imageUri = "";
-        }
-
-        if(uri != null) {
-            Log.d("uri", uri.toString());
         }
 
         if(contents.equals("") && imageUri.length() <= 0) {
