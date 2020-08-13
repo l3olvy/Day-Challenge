@@ -1,24 +1,31 @@
 package org.techtown.daychallenge.ui.Challenge;
 
+
+import android.app.AlertDialog;
 import android.content.Context;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.techtown.daychallenge.Challenge;
-import org.techtown.daychallenge.ChallengeAdapter;
+import org.techtown.daychallenge.ChContent;
 import org.techtown.daychallenge.MainActivity;
-import org.techtown.daychallenge.OnChallengeItemClickListener;
-import org.techtown.daychallenge.OnTabItemSelectedListener;
+import org.techtown.daychallenge.ui.Interface.OnChallengeItemClickListener;
+import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
+import org.techtown.daychallenge.ui.Writing.WritingFragment;
 
 import java.util.ArrayList;
 
@@ -29,6 +36,23 @@ public class ChallengeFragment extends Fragment {
     Context context;
     OnTabItemSelectedListener listener;
     public static String cate = null;
+    TextView ch_content;
+
+    String music;
+    String drawing;
+    String happiness;
+
+   // int m, d, h;
+    ChContent ch_item;
+
+   // ArrayList<ChContent> m_items;
+    //ArrayList<ChContent> d_items;
+   // ArrayList<ChContent> h_items;
+    //int mm = 0;
+    //int dd = 0;
+    //int hh = 0;
+
+
 
     @Override //B 프래그먼트를 Activity에 attach 할 때 호출
     public void onAttach(Context context) {
@@ -57,6 +81,7 @@ public class ChallengeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
+        ch_content = rootView.findViewById(R.id.challengecontent);
 
         Button write_btn = rootView.findViewById(R.id.write);
         write_btn.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +91,7 @@ public class ChallengeFragment extends Fragment {
                 //B 이동버튼 클릭할 때 stack에 push
                 MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
+
                 activity.onFragmentChanged(3); //B Writing 화면으로 전환
             }
         });
@@ -74,6 +100,8 @@ public class ChallengeFragment extends Fragment {
 
         // 데이터 로딩
         loadNoteListData(cate);
+
+        challengeContents(cate);
 
         return rootView;
     }
@@ -127,6 +155,45 @@ public class ChallengeFragment extends Fragment {
         return recordCount;
     }
 
+    public void challengeContents(String sel_category) {
+        dbAction db = new dbAction(getContext());
+        if (sel_category == "MUSIC") {
+            ArrayList<ChContent> items = db.getChallenge(sel_category);
+            if (items != null) {
+                ch_item = items.get(0);
+                music = ch_item.getCh_content();
+                ch_content.setText(music);
+                listener.challenge(ch_item);
+            } else {
+                completedDialog(sel_category);
+            }
+        } else if (sel_category == "DRAWING") {
+            ArrayList<ChContent> items = db.getChallenge(sel_category);
+            if (items != null) {
+                ch_item = items.get(0);
+                drawing = ch_item.getCh_content();
+                ch_content.setText(drawing);
+                listener.challenge(ch_item);
+            } else {
+                completedDialog(sel_category);
+            }
+        } else if (sel_category == "HAPPINESS") {
+            ArrayList<ChContent> items = db.getChallenge(sel_category);
+            if (items != null) {
+                ch_item = items.get(0);
+                happiness = ch_item.getCh_content();
+                ch_content.setText(happiness);
+                listener.challenge(ch_item);
+            } else {
+                completedDialog(sel_category);
+            }
+        }
+    }
 
-
+    public void completedDialog(String sel_category){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("완성");
+        builder.setMessage(sel_category + "를 완성하였습니다.");
+        builder.show();
+    }
 }

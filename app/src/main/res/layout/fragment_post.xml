@@ -52,9 +52,20 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:gravity="center|center_horizontal"
-                android:hint="여기에 작성된 내용이 올라옵니다."
                 android:textStyle="bold|italic" />
         </ScrollView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <Button
+                android:id="@+id/update_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="수정하기" />
+        </RelativeLayout>
 
     </LinearLayout>
 

@@ -6,9 +6,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,9 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import org.techtown.daychallenge.Challenge;
-import org.techtown.daychallenge.Feed;
-import org.techtown.daychallenge.OnTabItemSelectedListener;
+import org.techtown.daychallenge.MainActivity;
+import org.techtown.daychallenge.ui.Challenge.Challenge;
+import org.techtown.daychallenge.ui.Feed.Feed;
+import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
 
@@ -27,11 +30,11 @@ import java.io.InputStream;
 
 
 public class PostFragment extends Fragment {
-    dbAction dayDB = new dbAction(getContext());
     Context context;
     OnTabItemSelectedListener listener;
     TextView contentsInput;
     ImageView pictureImageView;
+    TextView challenge;
 
     //B 나중에 데이터 수정 시에 필요할 거 같아서 넣어놓았음
     public static final int MODE_INSERT = 1;
@@ -42,6 +45,7 @@ public class PostFragment extends Fragment {
 
     String picture;
     String content;
+    String ch_content;
 
     @Override //B 프래그먼트를 Activity에 attach 할 때 호출
     public void onAttach(Context context) {
@@ -75,6 +79,14 @@ public class PostFragment extends Fragment {
         initUI(rootView);
 
         applyItem();
+        Button updateBtn = rootView.findViewById(R.id.update_btn);
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(3); //B
+            }
+        });
 
         return rootView;
     }
@@ -82,6 +94,7 @@ public class PostFragment extends Fragment {
     private void initUI(ViewGroup rootView) {
         contentsInput = rootView.findViewById(R.id.textView3);
         pictureImageView = rootView.findViewById(R.id.post_img);
+        challenge = rootView.findViewById(R.id.text_post);
     }
 
     public void setContents(String data) {
@@ -103,15 +116,17 @@ public class PostFragment extends Fragment {
         this.item = item;
     }
     public void setItem2(Challenge item2){this.item2 = item2;}
-    public void setItem3(String picture, String content){ this.picture = picture; this.content = content;}
+    public void setItem3(String picture, String ch_content, String content){ this.picture = picture; this.ch_content = ch_content; this.content = content;}
 
     public void applyItem() {
+        dbAction dayDB = new dbAction(getContext());
 
         if (item != null) { //Feed
             mMode = MODE_MODIFY;
 
             setContents(item.getContent());
-
+            challenge.setText(item.getCh_content());
+            MainActivity.idx = item.getId();
             String picturePath = item.getPicture();
             if (picturePath == null || picturePath.equals("")) {
                 pictureImageView.setImageResource(R.drawable.gradation);
@@ -125,7 +140,8 @@ public class PostFragment extends Fragment {
             mMode = MODE_MODIFY;
 
             setContents(item2.getContent());
-
+            MainActivity.idx = item2.getId();
+            challenge.setText(item2.getCh_content());
             String picturePath = item2.getPicture();
             if (picturePath == null || picturePath.equals("")) {
                 pictureImageView.setImageResource(R.drawable.gradation);
@@ -139,7 +155,8 @@ public class PostFragment extends Fragment {
             mMode = MODE_MODIFY;
 
             setContents(content);
-
+            challenge.setText(ch_content);
+            MainActivity.idx = dayDB.selPid(content);
             String picturePath = picture;
             if (picturePath == null || picturePath.equals("")) {
                 pictureImageView.setImageResource(R.drawable.gradation);

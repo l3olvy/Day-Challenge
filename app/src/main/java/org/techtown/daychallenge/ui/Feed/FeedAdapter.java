@@ -1,4 +1,4 @@
-package org.techtown.daychallenge;
+package org.techtown.daychallenge.ui.Feed;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,12 +11,15 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.techtown.daychallenge.ui.Interface.OnFeedItemClickListener;
+import org.techtown.daychallenge.R;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>
-        implements OnFeedItemClickListener{
+        implements OnFeedItemClickListener {
     ArrayList<Feed> items = new ArrayList<Feed>();
 
     OnFeedItemClickListener listener;
@@ -86,17 +89,27 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>
             });
         }
 
-        //B Feed 프래그먼트의 아이템에 이미지 적용
-        public void setItem(Feed item) {
-            Uri picturePath = Uri.parse(item.getPicture());
+        public void setPicture(Uri picturePath) {
             try{
                 InputStream in = itemView.getContext().getContentResolver().openInputStream(picturePath);
                 Bitmap bitmap = BitmapFactory.decodeStream(in);
                 feedimage.setImageBitmap(bitmap);
             }
             catch (FileNotFoundException e){ e.printStackTrace(); }
+        }
+
+        //B Feed 프래그먼트의 아이템에 이미지 적용
+        public void setItem(Feed item) {
+            String picturePath = item.getPicture();
+            if (picturePath == null || picturePath.equals("")) {
+                feedimage.setImageResource(R.drawable.gradation);
+            } else {
+                Uri uri = Uri.parse(picturePath);
+                setPicture(uri);
+            }
 
         }
 
     }
+
 }

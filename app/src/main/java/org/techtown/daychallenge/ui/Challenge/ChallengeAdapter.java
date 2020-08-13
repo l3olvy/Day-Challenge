@@ -1,4 +1,4 @@
-package org.techtown.daychallenge;
+package org.techtown.daychallenge.ui.Challenge;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +8,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.techtown.daychallenge.ui.Interface.OnChallengeItemClickListener;
+import org.techtown.daychallenge.R;
+
 import java.util.ArrayList;
 
 public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.ViewHolder>
-        implements OnChallengeItemClickListener{
+        implements OnChallengeItemClickListener {
     ArrayList<Challenge> items = new ArrayList<Challenge>();
 
     OnChallengeItemClickListener listener;
@@ -86,7 +89,7 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.View
 
         //B Challenge 프래그먼트의 아이템에 (현재는)작성내용과 날짜 적용
         public void setItem(Challenge item) {
-            ch_content.setText(item.getContent()); //B 이거 바꾸면 Challenge Fragment 아이템에 ch_content 내용 뜸. 챌린지 테이블 안 넣어서 일단 구분 위해 작성 내용으로 해놓음
+            ch_content.setText(item.getCh_content()); //B 이거 바꾸면 Challenge Fragment 아이템에 ch_content 내용 뜸. 챌린지 테이블 안 넣어서 일단 구분 위해 작성 내용으로 해놓음
             date.setText(item.getRdate());
         }
 

@@ -1,15 +1,20 @@
 package org.techtown.daychallenge;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.techtown.daychallenge.ui.Challenge.Challenge;
+import org.techtown.daychallenge.ui.Feed.Feed;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -25,56 +30,11 @@ public class dbAction extends AppCompatActivity {
     public TextView txt;
     DatabaseHelper mHelper;
     public ImageView post_img;
+    String ch_content;
 
     public dbAction(Context ctx) {
         this.ctx = ctx;
         mHelper = new DatabaseHelper(ctx);
-    }
-
-    public void selectData() {
-        db = mHelper.getReadableDatabase();
-        Cursor cursor;
-
-        cursor = db.rawQuery("select * from 'challenge' where category='DRAWING' ", null);
-
-        while(cursor.moveToNext()) {
-            String a = cursor.getString(0);
-            String b = cursor.getString(1);
-            String c = cursor.getString(2);
-
-            //txt.append(a+" "+b+" "+c+" \n");
-            //Log.d("data ----------", a+" "+b+" "+c+" \n");
-        }
-
-        cursor.close();
-        mHelper.close();
-    }
-
-    public String executeQuery(String sel_category) {
-        db = mHelper.getReadableDatabase();
-
-        String sql = "select * from post where category = "
-                + "'"+sel_category+"'";
-        Cursor cursor = db.rawQuery(sql, null);
-        int recordCount = cursor.getCount();
-        //println("레코드 개수 : " + recordCount);
-        String uris = null;
-        for (int i = 0; i < recordCount; i++) {
-            cursor.moveToNext();
-
-            int id = cursor.getInt(0);
-            String category = cursor.getString(1);
-            String ch_content = cursor.getString(2);
-            String content = cursor.getString(3);
-            String photo = cursor.getString(4);
-            String rdate = cursor.getString(5);
-            uris = photo;
-            //println("레코드 #" + i + " : " + id + ", " + category + ", " + ch_content + ", " + content+ ", " + photo + ", " + rdate+"\n");
-            println(content);
-        }
-        cursor.close();
-        mHelper.close();
-        return uris;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -82,7 +42,6 @@ public class dbAction extends AppCompatActivity {
         db = mHelper.getWritableDatabase();
 
         long now = System.currentTimeMillis();
-        LocalDate mDate = LocalDate.now();
         Date dates = new Date(now);
         SimpleDateFormat dateNow = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
         String strnow = dateNow.format(dates);
@@ -94,6 +53,7 @@ public class dbAction extends AppCompatActivity {
 
         db.execSQL(sql);
         mHelper.close();
+        db.close();
     }
 
 
@@ -112,18 +72,32 @@ public class dbAction extends AppCompatActivity {
 //        database.execSQL(sql);
     }
 
-    public String reCon(int idx) {
+    public int selPid(String con) { // 수정을 위해 id 값 설정하는 함수
         db = mHelper.getReadableDatabase();
-
-        String sql = "select * from challenge where _id = "
-                + idx;
-
+        String sql = "select _id from post where content='"+con+"'";
         Cursor cursor = db.rawQuery(sql, null);
         cursor.moveToNext();
-        String recon = cursor.getString(2);
+        int pid = cursor.getInt(0);
         cursor.close();
         mHelper.close();
-        return recon;
+        db.close();
+        return pid;
+    }
+
+    public ArrayList upSel(int idx) {
+        db = mHelper.getReadableDatabase();
+        ArrayList data = new ArrayList();
+
+        String sql = "select photo, content from post where _id="+idx;
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToNext();
+
+        data.add(cursor.getString(0));
+        data.add(cursor.getString(1));
+
+        mHelper.close();
+        db.close();
+        return data;
     }
 
     public void println(String data) {
@@ -152,7 +126,8 @@ public class dbAction extends AppCompatActivity {
             items.add(new Challenge(id, ch_content, content, photo, rdate));
         }
         cursor.close();
-
+        mHelper.close();
+        db.close();
         datas.add(items);
         datas.add(recordCount);
 
@@ -167,7 +142,7 @@ public class dbAction extends AppCompatActivity {
         ArrayList<Feed> items = new ArrayList<Feed>();
 
         //B post 테이블에서 id 역순으로 데이터 갖고 오도록
-        String sql = "select _id, content, photo from post order by _id desc";
+        String sql = "select _id, ch_content, content, photo from post order by _id desc";
         Cursor cursor = db.rawQuery(sql, null);
         recordCount = cursor.getCount();
 
@@ -175,15 +150,68 @@ public class dbAction extends AppCompatActivity {
             cursor.moveToNext();
 
             int id = cursor.getInt(0);
-            String content = cursor.getString(1);
-            String photo = cursor.getString(2);
+            String ch_content = cursor.getString(1);
+            String content = cursor.getString(2);
+            String photo = cursor.getString(3);
 
-            items.add(new Feed(id, content, photo));
+            items.add(new Feed(id, ch_content, content, photo));
         }
         cursor.close();
+        mHelper.close();
+        db.close();
         datas.add(items);
         datas.add(recordCount);
 
         return datas;
+    }
+
+    public ArrayList getChallenge(String sel_category) {
+        db = mHelper.getReadableDatabase();
+
+        ArrayList<ChContent> items = new ArrayList<ChContent>();
+
+        String sql = "select * from challenge where category = " + "'" + sel_category + "'" + "and enable is null order by random() limit 1";
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            String category = cursor.getString(1);
+            ch_content = cursor.getString(2);
+            int enable = cursor.getInt(3);
+            items.add(new ChContent(id, category, ch_content, enable));
+
+            cursor.close();
+            mHelper.close();
+            db.close();
+            return items;
+        } else{
+            return null;
+        }
+    }
+    public void enable(Integer id){
+        db = mHelper.getWritableDatabase();
+
+        String sql = "update challenge set " +
+                "   enable = 1" +
+                " where " +
+                "   _id = " + id;
+
+        db.execSQL(sql);
+        mHelper.close();
+        db.close();
+    }
+
+    public void updateRecord(String contents, String imageUri, int pid) {
+        db = mHelper.getReadableDatabase();
+
+        String sql = "update post set "+
+                "content='"+contents+"', "+
+                "photo='"+imageUri+"'"+
+                " where"+
+                " _id ="+pid;
+        db.execSQL(sql);
+        mHelper.close();
+        db.close();
     }
 }

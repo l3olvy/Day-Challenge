@@ -11,11 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.techtown.daychallenge.Feed;
-import org.techtown.daychallenge.FeedAdapter;
 import org.techtown.daychallenge.MainActivity;
-import org.techtown.daychallenge.OnFeedItemClickListener;
-import org.techtown.daychallenge.OnTabItemSelectedListener;
+import org.techtown.daychallenge.ui.Interface.OnFeedItemClickListener;
+import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
 

@@ -1,15 +1,17 @@
-package org.techtown.daychallenge;
+package org.techtown.daychallenge.ui.Feed;
 
 public class Feed {
     int id;
+    String ch_content;
+    String content;;
     String picture;
-    String content;
 
     //B Feed 아이템과 아이템 클릭시 필요한 정보들 & 함수들
-    public Feed(int id, String content, String picture) {
+    public Feed(int id, String ch_content, String content, String picture) {
         this.id = id;
-        this.picture = picture;
+        this.ch_content = ch_content;
         this.content = content;
+        this.picture = picture;
     }
 
     public int getId() {
@@ -18,6 +20,14 @@ public class Feed {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getCh_content() {
+        return ch_content;
+    }
+
+    public void setCh_content(String ch_content) {
+        this.ch_content = ch_content;
     }
 
     public String getContent() {

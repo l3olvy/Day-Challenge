@@ -19,8 +19,11 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.techtown.daychallenge.ui.Category.CategoryFragment;
+import org.techtown.daychallenge.ui.Challenge.Challenge;
 import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
+import org.techtown.daychallenge.ui.Feed.Feed;
 import org.techtown.daychallenge.ui.Feed.FeedFragment;
+import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.ui.Post.PostFragment;
 import org.techtown.daychallenge.ui.Writing.WritingFragment;
 import org.techtown.daychallenge.ui.none.NoneFragment;
@@ -33,7 +36,7 @@ import java.io.InputStream;
 import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity implements OnTabItemSelectedListener {
-    public int idx;
+    public static int idx;
     dbAction pdb;
     CategoryFragment categoryFragment;
     ChallengeFragment challengeFragment;
@@ -231,12 +234,17 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
 
     }
 
-    public void showPostFragment3(String picture, String content){
+    public void showPostFragment3(String picture, String ch_content, String content){
         postFragment = new PostFragment();
-        postFragment.setItem3(picture, content);
+        postFragment.setItem3(picture, ch_content, content);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.nav_host_fragment, postFragment).commit();
     }
+
+    public void challenge(ChContent item){
+        writingFragment.setItem(item);
+    }
+
 
 }

@@ -23,13 +23,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import org.techtown.daychallenge.ChContent;
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
+import org.techtown.daychallenge.ui.Challenge.Challenge;
 import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class WritingFragment extends Fragment {
     private Context context;
@@ -37,13 +40,23 @@ public class WritingFragment extends Fragment {
     dbAction dayDB;
     Uri uri;
     static final int REQUEST_CODE=1;
-
+    ChContent item;
+    EditText con;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        uri = null;
         context = container.getContext();
+        dayDB = new dbAction(context);
 
         // 닫기버튼 누르면 Challenge로 넘어가도록 - 2020.07.30 송고은
-        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
+        con = rootView.findViewById(R.id.contentsInput);
+        picture_img = rootView.findViewById(R.id.pictureImageView);
+        // 수정에서 넘어 온 경우 해당 내용 뿌려짐
+        if(MainActivity.idx != 0) {
+            updatePost(dayDB);
+        }
+
         Button closeBtn = rootView.findViewById(R.id.closeBtn);
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,22 +75,7 @@ public class WritingFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) { // saveBtn 클릭시
-                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-                //B 이동버튼 클릭할 때 stack에 push
-                MainActivity.fragmentStack.push(currentFragment);
-                MainActivity activity = (MainActivity) getActivity();
-
-                EditText con = rootView.findViewById(R.id.contentsInput);
-                String contents = con.getText().toString();
-                setImage(uri);
-                dayDB = new dbAction(context);
-                String imageUri = uri.toString();
-
-                dayDB.insertRecord("post", ChallengeFragment.cate, "음악 들어", contents, imageUri);
-                activity.showPostFragment3(imageUri, contents);
-                con.setText("");
-                activity.onFragmentChanged(4); //B Post로 전환
-
+                saveBtn(dayDB);
             }
 
         });
@@ -94,7 +92,6 @@ public class WritingFragment extends Fragment {
             }
         });
 
-        picture_img = rootView.findViewById(R.id.pictureImageView);
         picture_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,19 +131,83 @@ public class WritingFragment extends Fragment {
         super.onActivityResult(requestCode,resultCode,data);
         if(resultCode == Activity.RESULT_CANCELED){
             Toast.makeText(context, "사진 선택 취소", Toast.LENGTH_LONG).show();
+            return;
         }
 
-        if (requestCode == REQUEST_CODE) { uri = data.getData(); }
+        if (requestCode == REQUEST_CODE) {
+            uri = data.getData();
+        }
         setImage(uri);
     }
 
     private void setImage(Uri uri) {
-        try{
+        try {
             InputStream in = context.getContentResolver().openInputStream(uri);
             Bitmap bitmap = BitmapFactory.decodeStream(in);
             picture_img.setImageBitmap(bitmap);
         }
         catch (FileNotFoundException e){ e.printStackTrace(); }
+    }
+
+    public void setItem(ChContent item) {
+        this.item = item;
+    }
+
+    public void updatePost(dbAction dayDB) {
+        ArrayList data = dayDB.upSel(MainActivity.idx);
+        String nContent = (String) data.get(1);
+
+        con.setHint(nContent);
+        //con.setText("ddd");
+
+        String nuri = (String) data.get(0);
+        if(nuri.length() > 0) {
+            Uri oUri = Uri.parse((String)data.get(0));
+            uri = oUri;
+            setImage(oUri);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void saveBtn(dbAction dayDB) {
+        Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
+        //B 이동버튼 클릭할 때 stack에 push
+        MainActivity.fragmentStack.push(currentFragment);
+        MainActivity activity = (MainActivity) getActivity();
+
+        String contents = con.getText().toString();
+        String imageUri;
+        if(uri != null) {
+            imageUri = uri.toString();
+        } else {
+            imageUri = "";
+        }
+
+        if(uri != null) {
+            Log.d("uri", uri.toString());
+        }
+
+        if(contents.equals("") && imageUri.length() <= 0) {
+            Toast.makeText(context,"글 또는 사진을 채워 주세요!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(MainActivity.idx == 0) { // 삽입하는 것
+            dayDB.insertRecord("post", ChallengeFragment.cate, item.getCh_content(), contents, imageUri);
+            dayDB.enable(item.getId());
+            uri = null;
+        } else { // 0이 아니라는 것은 수정하기에서 온 것
+            // 공백으로 저장하고 싶은 경우 어떡하지? -> 공백으로 들어가는데
+            if(contents == "" || contents == null) contents = " ";
+
+            dayDB.updateRecord(contents, imageUri, MainActivity.idx);
+        }
+
+        activity.showPostFragment3(imageUri, item.getCh_content(), contents);
+        con.setText("");
+        uri = null;
+        activity.onFragmentChanged(4); //B Post로 전환
+
     }
 
 

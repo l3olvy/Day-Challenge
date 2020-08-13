@@ -13,13 +13,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         mContext = context;
     }
 
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(SQLiteDatabase db) { }
 
-    }
+    public void onOpen(SQLiteDatabase db) { }
 
-    public void onOpen(SQLiteDatabase db) {
-        println("onOpen 호출됨");
-    }
+    public void onClose(SQLiteDatabase db) { db.close(); }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
