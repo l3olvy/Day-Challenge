@@ -24,7 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import org.techtown.daychallenge.ChContent;
+
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
@@ -39,7 +39,7 @@ public class WritingFragment extends Fragment {
     dbAction dayDB;
     Uri uri;
     static final int REQUEST_CODE=1;
-    ChContent item;
+    String ch;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -69,19 +69,21 @@ public class WritingFragment extends Fragment {
                 EditText con = rootView.findViewById(R.id.contentsInput);
                 String contents = con.getText().toString();
 
+                //B 이미지 미삽입 시 PostFragment에서 지정된 사진 뜨도록 ""넣어줌
                 dayDB = new dbAction(context);
                 String imageUri;
                 if(uri != null){
                     imageUri = uri.toString();
                     setImage(uri);
+                    uri = null;
                 }else{
                     imageUri = "";
                 }
 
 
-                dayDB.insertRecord("post", ChallengeFragment.cate, item.getCh_content(), contents, imageUri);
-                activity.showPostFragment3(imageUri, item.getCh_content(), contents);
-                dayDB.enable(item.getId());
+                dayDB.insertRecord("post", ChallengeFragment.cate, ch, contents, imageUri);
+                activity.showPostFragment3(imageUri, ch, contents);
+                dayDB.enable(ch);
                 con.setText("");
                 activity.onFragmentChanged(4); //B Post로 전환
 
@@ -152,8 +154,9 @@ public class WritingFragment extends Fragment {
         catch (FileNotFoundException e){ e.printStackTrace(); }
     }
 
-    public void setItem(ChContent item) {
-        this.item = item;
+    //B poat 테이블에 Challenge 넣어주기위해 전달받음
+    public void setItem(String ch) {
+        this.ch = ch;
     }
 
 }

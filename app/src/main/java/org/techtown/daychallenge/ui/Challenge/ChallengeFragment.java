@@ -4,12 +4,14 @@ package org.techtown.daychallenge.ui.Challenge;
 import android.app.AlertDialog;
 import android.content.Context;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,17 +37,17 @@ public class ChallengeFragment extends Fragment {
     public static String cate = null;
     TextView ch_content;
 
-    String music;
-    String drawing;
-    String happiness;
+    public static String music;
+    public static String drawing;
+    public static String happiness;
 
-    ChContent ch_item;
     Button write_btn;
 
     public static ArrayList<ChContent> m_items;
     public static ArrayList<ChContent> d_items;
     public static ArrayList<ChContent> h_items;
 
+    LinearLayout ch_box;
 
     @Override //B 프래그먼트를 Activity에 attach 할 때 호출
     public void onAttach(Context context) {
@@ -75,6 +77,7 @@ public class ChallengeFragment extends Fragment {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
 
+        ch_box = rootView.findViewById(R.id.ch_box);
         ch_content = rootView.findViewById(R.id.challengecontent);
 
         write_btn = rootView.findViewById(R.id.write);
@@ -148,53 +151,82 @@ public class ChallengeFragment extends Fragment {
         return recordCount;
     }
 
+
+    //B ChallengeFragment에 category 별로 Challenge와 완료 목록 넣음
     public void challengeContents(final String sel_category) {
         dbAction db = new dbAction(getContext());
-        if (sel_category == "MUSIC") {
-            if (m_items != null) {
-                ch_item = m_items.get(0);
-                music = ch_item.getCh_content();
-                ch_content.setText(music);
-                listener.challenge(ch_item);
-            }else{
-                write_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        completedDialog(sel_category);
-                    }
-                });
+        if(db.checkClear(sel_category) == true){ // challenge 테이블에 더이상 지정 카테고리의 챌린지가 없을 때
+            ch_content.setText(sel_category + "을(를) 완성하였습니다.");
+            write_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ch_box.setBackgroundColor(Color.WHITE);
+                    completedDialog(sel_category); // 완료 dialog 띄움
+                }
+            });
+        }else{ // 아직 Challenge가 남아있다면
+            if (sel_category == "MUSIC") {
+                if (m_items != null) {
+                    music = m_items.get(0).getCh_content(); // challenge 넣어주고
+                    setChallenge(music); //호출
+                }else if(music != null){
+                    setChallenge(music);
+                }
+            } else if (sel_category == "DRAWING") {
+                if (d_items != null) {
+                    drawing = d_items.get(0).getCh_content();
+                    setChallenge(drawing);
+                }else if(drawing != null){
+                    setChallenge(drawing);
+                }
+            } else if (sel_category == "HAPPINESS") {
+                if (h_items != null) {
+                    happiness = h_items.get(0).getCh_content();
+                    setChallenge(happiness);
+                }else if(happiness != null){
+                    setChallenge(happiness);
+                }
             }
-        } else if (sel_category == "DRAWING") {
-            if (d_items != null) {
-                ch_item = d_items.get(0);
-                drawing = ch_item.getCh_content();
-                ch_content.setText(drawing);
-                listener.challenge(ch_item);
-            }else{
-                write_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        completedDialog(sel_category);
-                    }
-                });
-            }
-        } else if (sel_category == "HAPPINESS") {
-            if (h_items != null) {
-                ch_item = h_items.get(0);
-                happiness = ch_item.getCh_content();
-                ch_content.setText(happiness);
-                listener.challenge(ch_item);
-            }else{
-                write_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        completedDialog(sel_category);
-                    }
-                });
-            }
+        }
+
+    }
+
+    public void setChallenge(String ch){
+        ch_content.setText(ch); //B ChallengeFragment에 Challenge 넣고
+        listener.challenge(ch); //B MainActivity 거쳐서 WritingFragment에 Challenge 전달 (post 테이블에 데이터 삽입하기 위해)
+        blockWriteBtn(ch); // 작성 완료시 더이상 못들어가게 Write Button 블락
+    }
+
+    public void blockWriteBtn(String challenge){
+        dbAction dayDB = new dbAction(context);
+        if(dayDB.checkWriting(challenge) == true){ //B post 테이블에 해당 챌린지 작성 내용이 있다면
+            ch_box.setBackgroundColor(Color.GRAY); // 박스 색 변화
+            ch_content.setText("'" + challenge + "' 완료!"); // 챌린지 완료 문구
+            write_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) { // 하루동안 더이상 작성 못하게 Write Button 블락 & 완료 dialog 띄움
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("완료");
+                    builder.setMessage("오늘의 챌린지를 완료하였습니다.");
+                    builder.show();
+                }
+            });
+        }else{ //B 챌린지 작성내용이 없다면
+            ch_box.setBackgroundColor(Color.WHITE);
+            write_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) { //B Writing 화면 이동 가능하게 블락 풀어둠.
+                    Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
+                    //B 이동버튼 클릭할 때 stack에 push
+                    MainActivity.fragmentStack.push(currentFragment);
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.onFragmentChanged(3); //B Writing 화면으로 전환
+                }
+            });
         }
     }
 
+    //B 31개 Challenge 완성 dialog 띄움
     public void completedDialog(String sel_category){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("완성");

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -194,10 +193,11 @@ public class dbAction extends AppCompatActivity {
         return datas;
     }
 
+    //B Challenge 랜덤으로 하나 가져오는 메소드
     public ArrayList getChallenge(String sel_category) {
         db = mHelper.getReadableDatabase();
 
-        ArrayList<ChContent> items = new ArrayList<ChContent>();
+        ArrayList<ChContent> items = new ArrayList();
 
         String sql = "select * from challenge where category = " + "'" + sel_category + "'" + " and enable is null order by random() limit 1";
 
@@ -209,8 +209,6 @@ public class dbAction extends AppCompatActivity {
             ch_content = cursor.getString(2);
             int enable = cursor.getInt(3);
             items.add(new ChContent(id, category, ch_content, enable));
-            Log.d("test-----------", category);
-            Log.d("sql---------------",sql);
 
             cursor.close();
             mHelper.close();
@@ -220,16 +218,55 @@ public class dbAction extends AppCompatActivity {
             return null;
         }
     }
-    public void enable(Integer id){
+
+    //B challenge 테이블에서 작성 완료한 Challenge의 enable을 1로 변경해주는 메소드
+    public void enable(String ch){
         db = mHelper.getWritableDatabase();
 
             String sql = "update challenge set " +
                     "   enable = 1" +
                     " where " +
-                    "   _id = " + id;
+                    "   ch_content = " + "'" + ch + "'";
 
         db.execSQL(sql);
 
     }
 
+    //B post 테이블에 작성 유무 알아보는 메소드
+    public boolean checkWriting(String ch){
+        db = mHelper.getWritableDatabase();
+
+        String sql = "select * from post where ch_content = " + "'" + ch + "'";
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if (cursor != null && cursor.moveToFirst()) { //이미 작성한 게 있다면
+            cursor.close();
+            mHelper.close();
+            return true;
+        }else{ //없다면
+            return false;
+        }
+
+    }
+
+    //B 31개 다 작성했나 확인하는 메소드
+    public boolean checkClear(String sel_category){
+        db = mHelper.getWritableDatabase();
+
+        String sql = "select * from challenge where category = " + "'" + sel_category + "'" + " and enable is null";
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if (cursor != null && cursor.moveToFirst()) { // 아직 챌린지가 남아있다면 false 리턴
+            cursor.close();
+            mHelper.close();
+            return false;
+        }else{
+            return true; // 챌린지 없으면 true 리턴
+        }
+
+    }
 }
+
+

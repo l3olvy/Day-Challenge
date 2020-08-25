@@ -39,6 +39,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+
 import java.util.Calendar;
 import java.util.Stack;
 
@@ -57,12 +58,23 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
     public static FragmentManager manager;
 
     SharedPreferences.Editor editor;
+    public SharedPreferences prefs;
+    SharedPreferences msp;
+    SharedPreferences dsp;
+    SharedPreferences hsp;
+
+    public static Context tContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //B TerminationService에서 MainActivity메소드 접근하기 위해 선언
+        tContext = this;
+        startService(new Intent(this, TerminationService.class));
+
         checkSelfPermission();
+        getPreferences();
         // 2020.08.09 DB 복사
         Context mContext = getApplicationContext();
         pdb = new dbAction(mContext);
@@ -109,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
             }
         });
 
-        // 현재 지정된 시간으로 알람 시간 설정
+        //B 현재 지정된 시간으로 알람 시간 설정
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -118,26 +130,63 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
 
 
 
-        // 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
+        //B 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
         if (calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
         }
 
-        //이거 없애면 자정에만 챌린지 하나씩 들어옴. 이거는 최초 설치 시 한 번만 챌린지에 내용 넣으려고 쓴건데,
-        //걍 앱 실행할 때마다 넣어져서 나중에 고쳐야할듯. 근데 이거 지우면 자정이 되기 전까지는 챌린지 내용 완료로 떠서 일단은 넣어둠.
-        if(editor == null){
+        //B  Preference에 설정한 값 저장
+        editor = getSharedPreferences("daily alarm", MODE_PRIVATE).edit();
+        editor.putLong("nextNotifyTime", (long)calendar.getTimeInMillis());
+
+        editor.apply();
+
+        //B 최초 실행 시 Challenge 넣어줌
+        prefs = getSharedPreferences("Pref", MODE_PRIVATE);
+        boolean isFirstRun = prefs.getBoolean("isFirstRun",true);
+        if(isFirstRun) {
             dbAction db = new dbAction(this);
             ChallengeFragment.m_items = db.getChallenge("MUSIC");
             ChallengeFragment.d_items = db.getChallenge("DRAWING");
             ChallengeFragment.h_items = db.getChallenge("HAPPINESS");
-        }
-        //  Preference에 설정한 값 저장
-        editor = getSharedPreferences("daily alarm", MODE_PRIVATE).edit();
-        editor.putLong("nextNotifyTime", (long)calendar.getTimeInMillis());
-        editor.apply();
 
+            prefs.edit().putBoolean("isFirstRun", false).apply();
+        }
 
         diaryNotification(calendar);
+    }
+
+    // 일반 종료시 불림
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        save(ChallengeFragment.music, ChallengeFragment.drawing, ChallengeFragment.happiness);
+    }
+
+    //B 종료 전 Challenge 내용 SharedPreferences에 저장.
+    public void save(String m, String d, String h) {
+        msp = getSharedPreferences("msp", MODE_PRIVATE);
+        SharedPreferences.Editor editor = msp.edit();
+        editor.putString("saveMusic", m);
+        editor.commit();
+        dsp = getSharedPreferences("dsp", MODE_PRIVATE);
+        SharedPreferences.Editor editor2 = dsp.edit();
+        editor2.putString("saveDrawing", d);
+        editor2.commit();
+        hsp = getSharedPreferences("hsp", MODE_PRIVATE);
+        SharedPreferences.Editor editor3 = hsp.edit();
+        editor3.putString("saveHappiness", h);
+        editor3.commit();
+    }
+
+    //B 종료시 저장해뒀던 Challenge 다시 넣어줌
+    public void getPreferences(){
+        msp = getSharedPreferences("msp", MODE_PRIVATE);
+        ChallengeFragment.music = msp.getString("saveMusic","");
+        dsp = getSharedPreferences("dsp", MODE_PRIVATE);
+        ChallengeFragment.drawing = dsp.getString("saveDrawing", "");
+        hsp = getSharedPreferences("hsp", MODE_PRIVATE);
+        ChallengeFragment.happiness = hsp.getString("saveHappiness", "");
     }
 
     void diaryNotification(Calendar calendar)
@@ -300,6 +349,7 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
 
     }
 
+    //B Challenge, 삽입한 image, contents를 PostFragment로 전달
     public void showPostFragment3(String picture, String ch_content, String content){
         postFragment = new PostFragment();
         postFragment.setItem3(picture, ch_content, content);
@@ -308,7 +358,8 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
                 .replace(R.id.nav_host_fragment, postFragment).commit();
     }
 
-    public void challenge(ChContent item){
-        writingFragment.setItem(item);
+    //B Challenge를 WritingFragment으로 전달
+    public void challenge(String ch){
+        writingFragment.setItem(ch);
     }
 }

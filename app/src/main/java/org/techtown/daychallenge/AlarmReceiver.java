@@ -56,7 +56,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
         }else builder.setSmallIcon(R.mipmap.ic_launcher); // Oreo 이하에서 mipmap 사용하지 않으면 Couldn't create icon: StatusBarIcon 에러남
 
-
+        //B 정해진 시간에 puch 알람 띄움
         builder.setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
@@ -67,6 +67,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentInfo("INFO")
                 .setContentIntent(pendingI);
 
+        //B 정해진 시간에 Challenge 내용 넣음
         dbAction db = new dbAction(context);
         ChallengeFragment.m_items = db.getChallenge("MUSIC");
         ChallengeFragment.d_items = db.getChallenge("DRAWING");

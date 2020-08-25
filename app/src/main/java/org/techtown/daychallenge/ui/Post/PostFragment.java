@@ -20,14 +20,12 @@ import org.techtown.daychallenge.ui.Challenge.Challenge;
 import org.techtown.daychallenge.ui.Feed.Feed;
 import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
-import org.techtown.daychallenge.dbAction;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
 public class PostFragment extends Fragment {
-    dbAction dayDB = new dbAction(getContext());
     Context context;
     OnTabItemSelectedListener listener;
     TextView contentsInput;
