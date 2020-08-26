@@ -44,6 +44,7 @@ import java.util.Calendar;
 import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity implements OnTabItemSelectedListener {
+    public static int idx;
     dbAction pdb;
     CategoryFragment categoryFragment;
     ChallengeFragment challengeFragment;
@@ -127,8 +128,6 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-
-
 
         //B 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
         if (calendar.before(Calendar.getInstance())) {
@@ -362,4 +361,6 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
     public void challenge(String ch){
         writingFragment.setItem(ch);
     }
+
+
 }

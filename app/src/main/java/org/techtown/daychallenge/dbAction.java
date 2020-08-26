@@ -36,58 +36,11 @@ public class dbAction extends AppCompatActivity {
         mHelper = new DatabaseHelper(ctx);
     }
 
-    public void selectData() {
-        db = mHelper.getReadableDatabase();
-        Cursor cursor;
-
-        cursor = db.rawQuery("select * from 'challenge' where category='DRAWING' ", null);
-
-        while(cursor.moveToNext()) {
-            String a = cursor.getString(0);
-            String b = cursor.getString(1);
-            String c = cursor.getString(2);
-
-            //txt.append(a+" "+b+" "+c+" \n");
-            //Log.d("data ----------", a+" "+b+" "+c+" \n");
-        }
-
-        cursor.close();
-        mHelper.close();
-    }
-
-    public String executeQuery(String sel_category) {
-        db = mHelper.getReadableDatabase();
-
-        String sql = "select * from post where category = "
-                + "'"+sel_category+"'";
-        Cursor cursor = db.rawQuery(sql, null);
-        int recordCount = cursor.getCount();
-        //println("레코드 개수 : " + recordCount);
-        String uris = null;
-        for (int i = 0; i < recordCount; i++) {
-            cursor.moveToNext();
-
-            int id = cursor.getInt(0);
-            String category = cursor.getString(1);
-            String ch_content = cursor.getString(2);
-            String content = cursor.getString(3);
-            String photo = cursor.getString(4);
-            String rdate = cursor.getString(5);
-            uris = photo;
-            //println("레코드 #" + i + " : " + id + ", " + category + ", " + ch_content + ", " + content+ ", " + photo + ", " + rdate+"\n");
-            println(content);
-        }
-        cursor.close();
-        mHelper.close();
-        return uris;
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void insertRecord(String tableName, String cate, String ch_con, String cons, String photo) {
         db = mHelper.getWritableDatabase();
 
         long now = System.currentTimeMillis();
-        LocalDate mDate = LocalDate.now();
         Date dates = new Date(now);
         SimpleDateFormat dateNow = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
         String strnow = dateNow.format(dates);
@@ -99,6 +52,7 @@ public class dbAction extends AppCompatActivity {
 
         db.execSQL(sql);
         mHelper.close();
+        db.close();
     }
 
 
@@ -117,18 +71,32 @@ public class dbAction extends AppCompatActivity {
 //        database.execSQL(sql);
     }
 
-    public String reCon(int idx) {
+    public int selPid(String con) { // 수정을 위해 id 값 설정하는 함수
         db = mHelper.getReadableDatabase();
-
-        String sql = "select * from challenge where _id = "
-                + idx;
-
+        String sql = "select _id from post where content='"+con+"'";
         Cursor cursor = db.rawQuery(sql, null);
         cursor.moveToNext();
-        String recon = cursor.getString(2);
+        int pid = cursor.getInt(0);
         cursor.close();
         mHelper.close();
-        return recon;
+        db.close();
+        return pid;
+    }
+
+    public ArrayList upSel(int idx) {
+        db = mHelper.getReadableDatabase();
+        ArrayList data = new ArrayList();
+
+        String sql = "select photo, content from post where _id="+idx;
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToNext();
+
+        data.add(cursor.getString(0));
+        data.add(cursor.getString(1));
+
+        mHelper.close();
+        db.close();
+        return data;
     }
 
     public void println(String data) {
@@ -157,7 +125,8 @@ public class dbAction extends AppCompatActivity {
             items.add(new Challenge(id, ch_content, content, photo, rdate));
         }
         cursor.close();
-
+        mHelper.close();
+        db.close();
         datas.add(items);
         datas.add(recordCount);
 
@@ -187,6 +156,8 @@ public class dbAction extends AppCompatActivity {
             items.add(new Feed(id, ch_content, content, photo));
         }
         cursor.close();
+        mHelper.close();
+        db.close();
         datas.add(items);
         datas.add(recordCount);
 
@@ -212,9 +183,9 @@ public class dbAction extends AppCompatActivity {
 
             cursor.close();
             mHelper.close();
+            db.close();
             return items;
-
-        }else{
+        } else {
             return null;
         }
     }
@@ -229,7 +200,21 @@ public class dbAction extends AppCompatActivity {
                     "   ch_content = " + "'" + ch + "'";
 
         db.execSQL(sql);
+        mHelper.close();
+        db.close();
+    }
 
+    public void updateRecord(String contents, String imageUri, int pid) {
+        db = mHelper.getReadableDatabase();
+
+        String sql = "update post set "+
+                "content='"+contents+"', "+
+                "photo='"+imageUri+"'"+
+                " where"+
+                " _id ="+pid;
+        db.execSQL(sql);
+        mHelper.close();
+        db.close();
     }
 
     //B post 테이블에 작성 유무 알아보는 메소드

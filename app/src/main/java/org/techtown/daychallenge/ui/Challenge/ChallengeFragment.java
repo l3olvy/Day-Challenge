@@ -76,6 +76,7 @@ public class ChallengeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
+        ch_content = rootView.findViewById(R.id.challengecontent);
 
         ch_box = rootView.findViewById(R.id.ch_box);
         ch_content = rootView.findViewById(R.id.challengecontent);
@@ -88,6 +89,7 @@ public class ChallengeFragment extends Fragment {
                 //B 이동버튼 클릭할 때 stack에 push
                 MainActivity.fragmentStack.push(currentFragment);
                 MainActivity activity = (MainActivity) getActivity();
+
                 activity.onFragmentChanged(3); //B Writing 화면으로 전환
             }
         });
@@ -150,6 +152,7 @@ public class ChallengeFragment extends Fragment {
 
         return recordCount;
     }
+
 
 
     //B ChallengeFragment에 category 별로 Challenge와 완료 목록 넣음
@@ -234,3 +237,4 @@ public class ChallengeFragment extends Fragment {
         builder.show();
     }
 }
+

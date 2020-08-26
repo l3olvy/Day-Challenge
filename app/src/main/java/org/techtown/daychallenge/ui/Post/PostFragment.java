@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import org.techtown.daychallenge.MainActivity;
+import org.techtown.daychallenge.dbAction;
 import org.techtown.daychallenge.ui.Challenge.Challenge;
 import org.techtown.daychallenge.ui.Feed.Feed;
 import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
@@ -23,7 +26,6 @@ import org.techtown.daychallenge.R;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
 
 public class PostFragment extends Fragment {
     Context context;
@@ -70,12 +72,17 @@ public class PostFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post, container, false);
-
-
         initUI(rootView);
 
         applyItem();
-
+        Button updateBtn = rootView.findViewById(R.id.update_btn);
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(3); //B
+            }
+        });
         return rootView;
     }
 
@@ -104,16 +111,17 @@ public class PostFragment extends Fragment {
         this.item = item;
     }
     public void setItem2(Challenge item2){this.item2 = item2;}
-    public void setItem3(String picture, String ch_content, String content){ this.picture = picture; this.ch_content = ch_content; this.content = content;}
+    public void setItem3(String picture, String ch_content, String content) { this.picture = picture; this.ch_content = ch_content; this.content = content;}
 
     public void applyItem() {
+        dbAction dayDB = new dbAction(getContext());
 
         if (item != null) { //Feed
             mMode = MODE_MODIFY;
 
             setContents(item.getContent());
-
             challenge.setText(item.getCh_content());
+            MainActivity.idx = item.getId();
 
             String picturePath = item.getPicture();
             if (picturePath == null || picturePath.equals("")) {
@@ -128,7 +136,7 @@ public class PostFragment extends Fragment {
             mMode = MODE_MODIFY;
 
             setContents(item2.getContent());
-
+            MainActivity.idx = item2.getId();
             challenge.setText(item2.getCh_content());
             String picturePath = item2.getPicture();
             if (picturePath == null || picturePath.equals("")) {
@@ -144,6 +152,7 @@ public class PostFragment extends Fragment {
 
             setContents(content);
             challenge.setText(ch_content);
+            MainActivity.idx = dayDB.selPid(content);
             String picturePath = picture;
             if (picturePath == null || picturePath.equals("")) {
                 pictureImageView.setImageResource(R.drawable.gradation);
@@ -152,9 +161,6 @@ public class PostFragment extends Fragment {
                 mMode = MODE_INSERT;
                 setPicture(uri);
             }
-
         }
-
     }
-
 }
