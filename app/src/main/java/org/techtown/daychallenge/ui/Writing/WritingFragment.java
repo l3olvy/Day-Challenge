@@ -52,10 +52,19 @@ public class WritingFragment extends Fragment {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
         con = rootView.findViewById(R.id.contentsInput);
         picture_img = rootView.findViewById(R.id.pictureImageView);
+
         // 수정에서 넘어 온 경우 해당 내용 뿌려짐
         if(MainActivity.idx != 0) {
             updatePost(dayDB);
         }
+
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                con.setText("");
+//            }
+//        });
+//        thread.start();
 
         Button closeBtn = rootView.findViewById(R.id.closeBtn);
         closeBtn.setOnClickListener(new View.OnClickListener() {
@@ -74,27 +83,6 @@ public class WritingFragment extends Fragment {
             @Override
             public void onClick(View v) { // saveBtn 클릭시
                 saveBtn(dayDB);
-
-                MainActivity activity = (MainActivity) getActivity();
-
-                EditText con = rootView.findViewById(R.id.contentsInput);
-                String contents = con.getText().toString();
-
-                dayDB = new dbAction(context);
-                String imageUri;
-                if(uri != null){
-                    imageUri = uri.toString();
-                    setImage(uri);
-                }else{
-                    imageUri = "";
-                }
-
-
-                dayDB.insertRecord("post", ChallengeFragment.cate, item.getCh_content(), contents, imageUri);
-                activity.showPostFragment3(imageUri, item.getCh_content(), contents);
-                dayDB.enable(item.getId());
-                con.setText("");
-                activity.onFragmentChanged(4); //B Post로 전환
           }
 
         });
@@ -151,7 +139,6 @@ public class WritingFragment extends Fragment {
             uri = data.getData();
         }
         setImage(uri);
-
     }
 
     private void setImage(Uri uri) {
@@ -172,7 +159,6 @@ public class WritingFragment extends Fragment {
         String nContent = (String) data.get(1);
 
         con.setHint(nContent);
-        //con.setText("ddd");
 
         String nuri = (String) data.get(0);
         if(nuri.length() > 0) {
@@ -205,16 +191,13 @@ public class WritingFragment extends Fragment {
         if(MainActivity.idx == 0) { // 삽입하는 것
             dayDB.insertRecord("post", ChallengeFragment.cate, item.getCh_content(), contents, imageUri);
             dayDB.enable(item.getId());
-            uri = null;
         } else { // 0이 아니라는 것은 수정하기에서 온 것
             // 공백으로 저장하고 싶은 경우 어떡하지? -> 공백으로 들어가는데
             if(contents == "" || contents == null) contents = " ";
-
             dayDB.updateRecord(contents, imageUri, MainActivity.idx);
         }
 
         activity.showPostFragment3(imageUri, item.getCh_content(), contents);
-        con.setText("");
         uri = null;
         activity.onFragmentChanged(4); //B Post로 전환
 

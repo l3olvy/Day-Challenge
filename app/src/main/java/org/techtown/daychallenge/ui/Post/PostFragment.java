@@ -72,8 +72,6 @@ public class PostFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post, container, false);
-
-
         initUI(rootView);
 
         applyItem();
@@ -85,7 +83,6 @@ public class PostFragment extends Fragment {
                 activity.onFragmentChanged(3); //B
             }
         });
-
         return rootView;
     }
 
@@ -114,7 +111,7 @@ public class PostFragment extends Fragment {
         this.item = item;
     }
     public void setItem2(Challenge item2){this.item2 = item2;}
-    public void setItem3(String picture, String ch_content, String content){ this.picture = picture; this.ch_content = ch_content; this.content = content;}
+    public void setItem3(String picture, String ch_content, String content) { this.picture = picture; this.ch_content = ch_content; this.content = content;}
 
     public void applyItem() {
         dbAction dayDB = new dbAction(getContext());
@@ -164,9 +161,6 @@ public class PostFragment extends Fragment {
                 mMode = MODE_INSERT;
                 setPicture(uri);
             }
-
         }
-
     }
-
 }
