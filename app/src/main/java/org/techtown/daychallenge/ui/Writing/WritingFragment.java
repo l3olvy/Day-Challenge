@@ -172,8 +172,8 @@ public class WritingFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void saveBtn(dbAction dayDB) {;
-        MainActivity activity = (MainActivity) getActivity();
+    public void saveBtn(dbAction dayDB) {
+         MainActivity activity = (MainActivity) getActivity();
 
         String contents = con.getText().toString();
         String imageUri;
@@ -192,7 +192,6 @@ public class WritingFragment extends Fragment {
             dayDB.insertRecord("post", ChallengeFragment.cate, ch, contents, imageUri);
             dayDB.enable(ch);
         } else { // 0이 아니라는 것은 수정하기에서 온 것
-            // 공백으로 저장하고 싶은 경우 어떡하지? -> 공백으로 들어가는데
             if(contents == "" || contents == null) contents = " ";
             dayDB.updateRecord(contents, imageUri, MainActivity.idx);
         }

@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -33,15 +34,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         PendingIntent pendingI = PendingIntent.getActivity(context, 0,
                 notificationIntent, 0);
 
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
-
 
         //OREO API 26 이상에서는 채널 필요
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
             builder.setSmallIcon(R.drawable.ic_launcher_foreground); //mipmap 사용시 Oreo 이상에서 시스템 UI 에러남
-
 
             String channelName ="매일 알람 채널";
             String description = "매일 정해진 시간에 알람합니다.";
@@ -72,6 +70,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         ChallengeFragment.m_items = db.getChallenge("MUSIC");
         ChallengeFragment.d_items = db.getChallenge("DRAWING");
         ChallengeFragment.h_items = db.getChallenge("HAPPINESS");
+        ChallengeFragment.p_items = db.getChallenge("PHOTO");
+        ChallengeFragment.m_change = 1;
+        ChallengeFragment.d_change = 1;
+        ChallengeFragment.h_change = 1;
+        ChallengeFragment.p_change = 1;
+
+        // m_chg = setSharedPreferences("m_change", MODE_PRIVATE);
+        // set을 하면 (강종 했을 때만) 알람이 안와...
 
         if (notificationManager != null) {
 
@@ -89,5 +95,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             editor.apply();
 
         }
+
+        // set을 if 밑에서 쓰면 알람은 오는데 설정이 안돼...
     }
 }

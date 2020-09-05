@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
-import org.techtown.daychallenge.dbAction;
 import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
 
 public class CategoryFragment extends Fragment {
@@ -74,6 +73,7 @@ public class CategoryFragment extends Fragment {
                 ChallengeFragment.cate = "PHOTO";
             }
         });
+
 
         return rootView;
     }

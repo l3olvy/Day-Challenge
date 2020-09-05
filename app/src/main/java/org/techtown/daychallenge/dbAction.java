@@ -31,10 +31,12 @@ public class dbAction extends AppCompatActivity {
     DatabaseHelper mHelper;
     public ImageView post_img;
     String ch_content;
+    public static Context context;
 
     public dbAction(Context ctx) {
         this.ctx = ctx;
         mHelper = new DatabaseHelper(ctx);
+        context = this;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -251,6 +253,41 @@ public class dbAction extends AppCompatActivity {
             return true; // 챌린지 없으면 true 리턴
         }
 
+    }
+
+    //B 모든 챌린지 끝냈나 확인하는 메소드 (다 끝냈으면 푸시알람 안 주기 위해)
+    public boolean checkAllClear(){
+        db = mHelper.getWritableDatabase();
+
+        String sql = "select * from challenge where enable is null";
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if (cursor != null && cursor.moveToFirst()) { // 아직 챌린지가 남아있다면 false 리턴
+            cursor.close();
+            mHelper.close();
+            return false;
+        }else{
+            return true; // 챌린지 없으면 true 리턴
+        }
+    }
+
+    //B 해당 카테고리에 당일에 쓴 작성물이 있는지 없는지 체크하는 메소드
+    public boolean checkSave(String cate, String date){
+        db = mHelper.getWritableDatabase();
+
+        String sql = "select * from post where category = " + "'" + cate + "'" + " and rdate = " + "'" + date + "'";
+
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if (cursor != null && cursor.moveToFirst()) { //이미 작성한 게 있다면
+            cursor.close();
+            mHelper.close();
+            return true;
+        }else{ //없다면
+            return false;
+        }
     }
 }
 
