@@ -62,6 +62,19 @@ public class CategoryFragment extends Fragment {
             }
         });
 
+        Button photo_btn = rootView.findViewById(R.id.btn_photo);
+        photo_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
+
+                MainActivity.fragmentStack.push(currentFragment);
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(1);
+                ChallengeFragment.cate = "PHOTO";
+            }
+        });
+
         return rootView;
     }
 }

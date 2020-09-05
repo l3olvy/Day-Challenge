@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="393d2bf7-d7cb-4109-81af-16909b18b7e4" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -7,6 +15,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="4100961af259b183" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -19,7 +28,11 @@
       </state>
     </system>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1gxYe4n2K3l5mj2K10QUIcsWxMH" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -28,8 +41,13 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="android.sdk.path" value="C:/CookAndroid/sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/res/drawable" />
     <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\goeun\Desktop\9158\Day-Challenge\app\src\main\res\drawable" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
@@ -103,5 +121,27 @@
       <updated>1599057802347</updated>
     </task>
     <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1419" height="210" key="GridCell.Tab.0.bottom" timestamp="1599298625380">
+      <screen x="0" y="0" width="1474" height="864" />
+    </state>
+    <state width="1419" height="210" key="GridCell.Tab.0.bottom/0.0.1474.864@0.0.1474.864" timestamp="1599298625380" />
+    <state width="1419" height="210" key="GridCell.Tab.0.center" timestamp="1599298625380">
+      <screen x="0" y="0" width="1474" height="864" />
+    </state>
+    <state width="1419" height="210" key="GridCell.Tab.0.center/0.0.1474.864@0.0.1474.864" timestamp="1599298625380" />
+    <state width="1419" height="210" key="GridCell.Tab.0.left" timestamp="1599298625380">
+      <screen x="0" y="0" width="1474" height="864" />
+    </state>
+    <state width="1419" height="210" key="GridCell.Tab.0.left/0.0.1474.864@0.0.1474.864" timestamp="1599298625380" />
+    <state width="1419" height="210" key="GridCell.Tab.0.right" timestamp="1599298625380">
+      <screen x="0" y="0" width="1474" height="864" />
+    </state>
+    <state width="1419" height="210" key="GridCell.Tab.0.right/0.0.1474.864@0.0.1474.864" timestamp="1599298625380" />
+    <state x="366" y="230" key="com.intellij.ide.util.TipDialog" timestamp="1599293071023">
+      <screen x="0" y="0" width="1474" height="864" />
+    </state>
+    <state x="366" y="230" key="com.intellij.ide.util.TipDialog/0.0.1474.864@0.0.1474.864" timestamp="1599293071023" />
   </component>
 </project>

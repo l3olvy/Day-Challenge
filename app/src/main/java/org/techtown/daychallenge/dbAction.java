@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -239,8 +240,7 @@ public class dbAction extends AppCompatActivity {
     public boolean checkClear(String sel_category){
         db = mHelper.getWritableDatabase();
 
-        String sql = "select * from challenge where category = " + "'" + sel_category + "'" + " and enable is null";
-
+        String sql = "select * from challenge where category="+"'"+sel_category+"'"+ " and enable is null";
         Cursor cursor = db.rawQuery(sql, null);
 
         if (cursor != null && cursor.moveToFirst()) { // 아직 챌린지가 남아있다면 false 리턴

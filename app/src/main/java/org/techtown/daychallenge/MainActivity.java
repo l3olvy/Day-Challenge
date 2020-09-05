@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
     SharedPreferences msp;
     SharedPreferences dsp;
     SharedPreferences hsp;
+    SharedPreferences psp;
 
     public static Context tContext;
 
@@ -148,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
             ChallengeFragment.m_items = db.getChallenge("MUSIC");
             ChallengeFragment.d_items = db.getChallenge("DRAWING");
             ChallengeFragment.h_items = db.getChallenge("HAPPINESS");
+            ChallengeFragment.p_items = db.getChallenge("PHOTO");
 
             prefs.edit().putBoolean("isFirstRun", false).apply();
         }
@@ -159,11 +161,11 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        save(ChallengeFragment.music, ChallengeFragment.drawing, ChallengeFragment.happiness);
+        save(ChallengeFragment.music, ChallengeFragment.drawing, ChallengeFragment.happiness, ChallengeFragment.photo);
     }
 
     //B 종료 전 Challenge 내용 SharedPreferences에 저장.
-    public void save(String m, String d, String h) {
+    public void save(String m, String d, String h, String p) {
         msp = getSharedPreferences("msp", MODE_PRIVATE);
         SharedPreferences.Editor editor = msp.edit();
         editor.putString("saveMusic", m);
@@ -176,6 +178,10 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
         SharedPreferences.Editor editor3 = hsp.edit();
         editor3.putString("saveHappiness", h);
         editor3.commit();
+        psp = getSharedPreferences("psp", MODE_PRIVATE);
+        SharedPreferences.Editor editor4 = psp.edit();
+        editor4.putString("savePhoto", p);
+        editor4.commit();
     }
 
     //B 종료시 저장해뒀던 Challenge 다시 넣어줌
@@ -186,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
         ChallengeFragment.drawing = dsp.getString("saveDrawing", "");
         hsp = getSharedPreferences("hsp", MODE_PRIVATE);
         ChallengeFragment.happiness = hsp.getString("saveHappiness", "");
+        psp = getSharedPreferences("psp", MODE_PRIVATE);
+        ChallengeFragment.photo = psp.getString("savePhoto", "");
     }
 
     void diaryNotification(Calendar calendar)

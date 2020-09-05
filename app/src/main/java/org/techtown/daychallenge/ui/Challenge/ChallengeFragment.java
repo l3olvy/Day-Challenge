@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,12 +41,14 @@ public class ChallengeFragment extends Fragment {
     public static String music;
     public static String drawing;
     public static String happiness;
+    public static String photo;
 
     Button write_btn;
 
     public static ArrayList<ChContent> m_items;
     public static ArrayList<ChContent> d_items;
     public static ArrayList<ChContent> h_items;
+    public static ArrayList<ChContent> p_items;
 
     LinearLayout ch_box;
 
@@ -149,7 +152,6 @@ public class ChallengeFragment extends Fragment {
         adapter.setItems(items); //B adapter에 데이터 추가
         adapter.notifyDataSetChanged(); //B adatper에 추가가 완료되었다고 알려주는 함수 호출
 
-
         return recordCount;
     }
 
@@ -188,6 +190,13 @@ public class ChallengeFragment extends Fragment {
                     setChallenge(happiness);
                 }else if(happiness != null){
                     setChallenge(happiness);
+                }
+            } else if (sel_category == "PHOTO") {
+                if (p_items != null) {
+                    photo = p_items.get(0).getCh_content();
+                    setChallenge(photo);
+                }else if(photo != null){
+                    setChallenge(photo);
                 }
             }
         }
