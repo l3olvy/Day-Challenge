@@ -172,9 +172,6 @@ public class WritingFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void saveBtn(dbAction dayDB) {
-        Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-        //B 이동버튼 클릭할 때 stack에 push
-        MainActivity.fragmentStack.push(currentFragment);
         MainActivity activity = (MainActivity) getActivity();
 
         String contents = con.getText().toString();

@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -72,6 +73,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         ChallengeFragment.m_items = db.getChallenge("MUSIC");
         ChallengeFragment.d_items = db.getChallenge("DRAWING");
         ChallengeFragment.h_items = db.getChallenge("HAPPINESS");
+        ChallengeFragment.m_change = 1;
+        ChallengeFragment.d_change = 1;
+        ChallengeFragment.h_change = 1;
 
         if (notificationManager != null) {
 

@@ -64,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
     SharedPreferences dsp;
     SharedPreferences hsp;
 
+    SharedPreferences m_chg;
+    SharedPreferences d_chg;
+    SharedPreferences h_chg;
+
     public static Context tContext;
 
     @Override
@@ -73,9 +77,8 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
         //B TerminationService에서 MainActivity메소드 접근하기 위해 선언
         tContext = this;
         startService(new Intent(this, TerminationService.class));
-
         checkSelfPermission();
-        getPreferences();
+
         // 2020.08.09 DB 복사
         Context mContext = getApplicationContext();
         pdb = new dbAction(mContext);
@@ -87,6 +90,25 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
         } catch(Exception e) {
             e.printStackTrace();
         }
+
+        //B 최초 실행 시 Challenge 넣어줌
+        prefs = getSharedPreferences("Pref", MODE_PRIVATE);
+        boolean isFirstRun = prefs.getBoolean("isFirstRun",true);
+        if(isFirstRun) {
+            dbAction db = new dbAction(this);
+            ChallengeFragment.m_change = 1;
+            ChallengeFragment.d_change = 1;
+            ChallengeFragment.h_change = 1;
+            ChallengeFragment.m_items = db.getChallenge("MUSIC");
+            ChallengeFragment.d_items = db.getChallenge("DRAWING");
+            ChallengeFragment.h_items = db.getChallenge("HAPPINESS");
+
+            prefs.edit().putBoolean("isFirstRun", false).apply();
+        }else{
+            //B 종료 전 저장해뒀던 챌린지와 change 변수 가져옴
+            getPreferences();
+        }
+
 
         //delTable(); //Data가 많아져서 지저분 해졌을 경우에 table 자체를 삭제하고 생성함
 
@@ -140,19 +162,10 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
 
         editor.apply();
 
-        //B 최초 실행 시 Challenge 넣어줌
-        prefs = getSharedPreferences("Pref", MODE_PRIVATE);
-        boolean isFirstRun = prefs.getBoolean("isFirstRun",true);
-        if(isFirstRun) {
-            dbAction db = new dbAction(this);
-            ChallengeFragment.m_items = db.getChallenge("MUSIC");
-            ChallengeFragment.d_items = db.getChallenge("DRAWING");
-            ChallengeFragment.h_items = db.getChallenge("HAPPINESS");
-
-            prefs.edit().putBoolean("isFirstRun", false).apply();
+        //B 챌린지가 남아있다면 알람 울림
+        if(((dbAction)dbAction.context).checkAllClear() == false) {
+            diaryNotification(calendar);
         }
-
-        diaryNotification(calendar);
     }
 
     // 일반 종료시 불림
@@ -160,14 +173,31 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
     protected void onDestroy() {
         super.onDestroy();
         save(ChallengeFragment.music, ChallengeFragment.drawing, ChallengeFragment.happiness);
+        change(ChallengeFragment.m_change, ChallengeFragment.d_change, ChallengeFragment.h_change);
+    }
+
+    //B 챌린지 랜덤
+    public void change(Integer m_num, Integer d_num, Integer h_num){
+        m_chg = getSharedPreferences("m_change", MODE_PRIVATE);
+        SharedPreferences.Editor editor4 = m_chg.edit();
+        editor4.putInt("m_changeChallenge", m_num);
+        editor4.commit();
+        d_chg = getSharedPreferences("d_change", MODE_PRIVATE);
+        SharedPreferences.Editor editor5 = d_chg.edit();
+        editor5.putInt("d_changeChallenge", d_num);
+        editor5.commit();
+        h_chg = getSharedPreferences("h_change", MODE_PRIVATE);
+        SharedPreferences.Editor editor6 = h_chg.edit();
+        editor6.putInt("h_changeChallenge", h_num);
+        editor6.commit();
     }
 
     //B 종료 전 Challenge 내용 SharedPreferences에 저장.
     public void save(String m, String d, String h) {
         msp = getSharedPreferences("msp", MODE_PRIVATE);
-        SharedPreferences.Editor editor = msp.edit();
-        editor.putString("saveMusic", m);
-        editor.commit();
+        SharedPreferences.Editor editor1 = msp.edit();
+        editor1.putString("saveMusic", m);
+        editor1.commit();
         dsp = getSharedPreferences("dsp", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = dsp.edit();
         editor2.putString("saveDrawing", d);
@@ -186,6 +216,15 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
         ChallengeFragment.drawing = dsp.getString("saveDrawing", "");
         hsp = getSharedPreferences("hsp", MODE_PRIVATE);
         ChallengeFragment.happiness = hsp.getString("saveHappiness", "");
+        //B 난 왜 이 코드가 안 들어가는데도 실행이 되는질 몰겠어. 이거 넣어도 실행은 되는ㄷㅔ 알람 들어올 때 change횟수가 1로 초기화가 안 됨 개빡ㅊㅣ게!
+        //일단 주석처리 해놓긴했는데 지우지말아줘.
+        /*m_chg = getSharedPreferences("m_change", MODE_PRIVATE);
+        ChallengeFragment.m_change = m_chg.getInt("m_changeChallenge", 10);
+        d_chg = getSharedPreferences("d_change", MODE_PRIVATE);
+        ChallengeFragment.d_change = d_chg.getInt("d_changeChallenge", 10);
+        h_chg = getSharedPreferences("h_change", MODE_PRIVATE);
+        ChallengeFragment.h_change = h_chg.getInt("h_changeChallenge", 10);*/
+
     }
 
     void diaryNotification(Calendar calendar)
@@ -214,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements OnTabItemSelected
             pm.setComponentEnabledSetting(receiver,
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP);
-
         }
     }
 
