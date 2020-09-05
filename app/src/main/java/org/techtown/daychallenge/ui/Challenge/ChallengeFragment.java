@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,11 @@ import android.widget.Button;
 
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,7 +29,10 @@ import org.techtown.daychallenge.ui.Interface.OnTabItemSelectedListener;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class ChallengeFragment extends Fragment {
     RecyclerView recyclerView;
@@ -40,12 +46,20 @@ public class ChallengeFragment extends Fragment {
     public static String music;
     public static String drawing;
     public static String happiness;
+    public static String photo;
+
+    public static Integer m_change;
+    public static Integer d_change;
+    public static Integer h_change;
+    public static Integer p_change;
 
     Button write_btn;
+    Button change_btn;
 
     public static ArrayList<ChContent> m_items;
     public static ArrayList<ChContent> d_items;
     public static ArrayList<ChContent> h_items;
+    public static ArrayList<ChContent> p_items;
 
     LinearLayout ch_box;
 
@@ -73,14 +87,96 @@ public class ChallengeFragment extends Fragment {
 
     //B 레이아웃을 inflate하는 곳, view 객체를 얻어서 초기화
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+                             final ViewGroup container, Bundle savedInstanceState) {
 
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
+        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_challenge, container, false);
         ch_content = rootView.findViewById(R.id.challengecontent);
 
         ch_box = rootView.findViewById(R.id.ch_box);
         ch_content = rootView.findViewById(R.id.challengecontent);
 
+        change_btn = rootView.findViewById(R.id.change);
+        //B 랜덤 체인지 버튼 누르면
+        change_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //B 현재 날짜 불러오고
+                long now = System.currentTimeMillis();
+                Date dates = new Date(now);
+                SimpleDateFormat dateNow = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+                String strnow = dateNow.format(dates);
+                dbAction db = new dbAction(getContext());
+
+                //B 각 카테고리에 오늘 작성한 게시물이 있으면 블락
+                if(db.checkSave(cate, strnow) == true) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("불가");
+                    builder.setMessage("오늘의 챌린지를 완료하였기 때문에 변경 불가합니다.");
+                    builder.show();
+                }else{ //B 없으면 변경횟수 3번 제공
+                    if(cate == "MUSIC"){
+                        Toast.makeText(context, "m_change = " + m_change, Toast.LENGTH_SHORT).show();
+                        if(m_change <= 3){ //B 세 번까진 변경해줌
+                            m_change += 1;
+                            ChallengeFragment.m_items = db.getChallenge("MUSIC");
+                            //B 현재 Fragment 변경사항 새로고침? 해주는 코드
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            ft.detach(ChallengeFragment.this).attach(ChallengeFragment.this).commit();
+                        }
+                        else{ //B 세 번을 넘어가면 블락
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("불가");
+                            builder.setMessage("오늘의 챌린지 변경 횟수를 초과하였습니다.");
+                            builder.show();
+                        }
+                    }
+                    else if(cate == "DRAWING"){
+                        Toast.makeText(context, "d_change = " + d_change, Toast.LENGTH_SHORT).show();
+                        if(d_change <= 3){
+                            d_change += 1;
+                            ChallengeFragment.d_items = db.getChallenge("DRAWING");
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            ft.detach(ChallengeFragment.this).attach(ChallengeFragment.this).commit();
+                        }
+                        else{
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("불가");
+                            builder.setMessage("오늘의 챌린지 변경 횟수를 초과하였습니다.");
+                            builder.show();
+                        }
+                    }
+                    else if(cate == "HAPPINESS") {
+                        Toast.makeText(context, "h_change = " + h_change, Toast.LENGTH_SHORT).show();
+                        if (h_change <= 3) {
+                            h_change += 1;
+                            ChallengeFragment.h_items = db.getChallenge("HAPPINESS");
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            ft.detach(ChallengeFragment.this).attach(ChallengeFragment.this).commit();
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("불가");
+                            builder.setMessage("오늘의 챌린지 변경 횟수를 초과하였습니다.");
+                            builder.show();
+                        }
+                    } else if(cate == "PHOTO"){
+                            Toast.makeText(context, "p_change = " + p_change, Toast.LENGTH_SHORT).show();
+                            if(p_change <= 3){
+                                p_change += 1;
+                                ChallengeFragment.p_items = db.getChallenge("PHOTO");
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                ft.detach(ChallengeFragment.this).attach(ChallengeFragment.this).commit();
+                            }
+                            else{
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                builder.setTitle("불가");
+                                builder.setMessage("오늘의 챌린지 변경 횟수를 초과하였습니다.");
+                                builder.show();
+                            }
+                        }
+                }
+
+            }
+        });
         write_btn = rootView.findViewById(R.id.write);
         write_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +245,6 @@ public class ChallengeFragment extends Fragment {
         adapter.setItems(items); //B adapter에 데이터 추가
         adapter.notifyDataSetChanged(); //B adatper에 추가가 완료되었다고 알려주는 함수 호출
 
-
         return recordCount;
     }
 
@@ -188,6 +283,13 @@ public class ChallengeFragment extends Fragment {
                     setChallenge(happiness);
                 }else if(happiness != null){
                     setChallenge(happiness);
+                }
+            } else if (sel_category == "PHOTO") {
+                if (p_items != null) {
+                    photo = p_items.get(0).getCh_content();
+                    setChallenge(photo);
+                }else if(photo != null){
+                    setChallenge(photo);
                 }
             }
         }

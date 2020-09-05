@@ -24,7 +24,6 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 
-import org.techtown.daychallenge.ChContent;
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
 import org.techtown.daychallenge.dbAction;
@@ -41,14 +40,25 @@ public class WritingFragment extends Fragment {
     Uri uri;
     static final int REQUEST_CODE=1;
     String ch;
-    ChContent item;
     EditText con;
+    boolean check;
+    String nContent;
+
+    @Override
+    public void onResume() { // setText
+        super.onResume();
+
+        if(MainActivity.idx != 0) {
+            con.setText(nContent);
+        } else if(check == false) con.setText("");
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         uri = null;
         context = container.getContext();
         dayDB = new dbAction(context);
+        check = false;
 
         // 닫기버튼 누르면 Challenge로 넘어가도록 - 2020.07.30 송고은
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_writing, container, false);
@@ -60,19 +70,10 @@ public class WritingFragment extends Fragment {
             updatePost(dayDB);
         }
 
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                con.setText("");
-//            }
-//        });
-//        thread.start();
-
         Button closeBtn = rootView.findViewById(R.id.closeBtn);
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 MainActivity activity = (MainActivity) getActivity();
                 activity.onFragmentChanged(1); //B Challenge로 전환
             }
@@ -91,9 +92,9 @@ public class WritingFragment extends Fragment {
         Button delete_btn = rootView.findViewById(R.id.deleteBtn);
         delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.onFragmentChanged(1); //B Challenge로 전환
+            public void onClick(View v) { // 삭제 버튼 클릭시
+                picture_img.setImageDrawable(getResources().getDrawable(R.drawable.imagetoset));
+                uri = null;
             }
         });
 
@@ -104,7 +105,7 @@ public class WritingFragment extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 startActivityForResult(intent, REQUEST_CODE);
-
+                check = true;
             }
         });
 
@@ -130,6 +131,8 @@ public class WritingFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
+        nContent = con.getText().toString();
+        Log.d("content", nContent);
 
         if (resultCode == Activity.RESULT_CANCELED) {
             Toast.makeText(context, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
@@ -158,9 +161,7 @@ public class WritingFragment extends Fragment {
 
     public void updatePost(dbAction dayDB) {
         ArrayList data = dayDB.upSel(MainActivity.idx);
-        String nContent = (String) data.get(1);
-
-        con.setHint(nContent);
+        nContent = (String) data.get(1);
 
         String nuri = (String) data.get(0);
         if(nuri.length() > 0) {
@@ -172,10 +173,7 @@ public class WritingFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void saveBtn(dbAction dayDB) {
-        Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
-        //B 이동버튼 클릭할 때 stack에 push
-        MainActivity.fragmentStack.push(currentFragment);
-        MainActivity activity = (MainActivity) getActivity();
+         MainActivity activity = (MainActivity) getActivity();
 
         String contents = con.getText().toString();
         String imageUri;
@@ -194,13 +192,13 @@ public class WritingFragment extends Fragment {
             dayDB.insertRecord("post", ChallengeFragment.cate, ch, contents, imageUri);
             dayDB.enable(ch);
         } else { // 0이 아니라는 것은 수정하기에서 온 것
-            // 공백으로 저장하고 싶은 경우 어떡하지? -> 공백으로 들어가는데
             if(contents == "" || contents == null) contents = " ";
             dayDB.updateRecord(contents, imageUri, MainActivity.idx);
         }
 
         activity.showPostFragment3(imageUri, ch, contents);
         uri = null;
+        check = false;
         activity.onFragmentChanged(4); //B Post로 전환
 
     }

@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 
 import org.techtown.daychallenge.MainActivity;
 import org.techtown.daychallenge.R;
-import org.techtown.daychallenge.dbAction;
 import org.techtown.daychallenge.ui.Challenge.ChallengeFragment;
 
 public class CategoryFragment extends Fragment {
@@ -61,6 +60,20 @@ public class CategoryFragment extends Fragment {
                 ChallengeFragment.cate = "HAPPINESS";
             }
         });
+
+        Button photo_btn = rootView.findViewById(R.id.btn_photo);
+        photo_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment currentFragment = MainActivity.manager.findFragmentById(R.id.nav_host_fragment);
+
+                MainActivity.fragmentStack.push(currentFragment);
+                MainActivity activity = (MainActivity) getActivity();
+                activity.onFragmentChanged(1);
+                ChallengeFragment.cate = "PHOTO";
+            }
+        });
+
 
         return rootView;
     }
